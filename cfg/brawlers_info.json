@@ -784,11 +784,19 @@
       "ignore_walls_for_supers": true
     },
     "glowbert": {
-    "safe_range": 315,
-    "attack_range": 512,
-    "super_type": "damage",
-    "super_range": 362,
-    "ignore_walls_for_attacks": false,
-    "ignore_walls_for_supers": false
-  }
+      "safe_range": 315,
+      "attack_range": 512,
+      "super_type": "damage",
+      "super_range": 362,
+      "ignore_walls_for_attacks": false,
+      "ignore_walls_for_supers": false
+    },
+    "glowy": {
+      "safe_range": 315,
+      "attack_range": 512,
+      "super_type": "damage",
+      "super_range": 362,
+      "ignore_walls_for_attacks": false,
+      "ignore_walls_for_supers": false
+    }
 }
