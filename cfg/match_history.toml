@@ -1,9 +1,9 @@
 [bull]
 defeat = 23
-victory = 33
-draw = 0
+victory = 34
+draw = 1
 
 [total]
 defeat = 0
-victory = 1
-draw = 0
+victory = 2
+draw = 1
