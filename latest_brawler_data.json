@@ -1,0 +1,11 @@
+[
+    {
+        "brawler": "bull",
+        "push_until": 10000,
+        "trophies": 10,
+        "wins": 5,
+        "type": "wins",
+        "automatically_pick": false,
+        "win_streak": 0
+    }
+]
