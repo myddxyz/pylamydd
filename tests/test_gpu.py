@@ -1,5 +1,5 @@
 """
-GPU Verification Script for PylaAI
+GPU Verification Script for PylaMydd
 Run: python tests/test_gpu.py
 
 Checks DirectML availability and benchmarks ONNX inference — no torch needed.
@@ -58,7 +58,7 @@ def test_model_inference(model_path, provider):
 
 if __name__ == "__main__":
     print("=" * 55)
-    print("  PylaAI — GPU Verification (torch-free)")
+    print("  PylaMydd — GPU Verification (torch-free)")
     print("=" * 55)
 
     gpu_ok = test_providers()
