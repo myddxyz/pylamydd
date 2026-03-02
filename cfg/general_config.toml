@@ -7,5 +7,5 @@ pyla_version = "0.5.8"
 long_press_star_drop = "yes"
 trophies_multiplier = 1
 run_for_minutes = 600
-current_emulator = "LDPlayer"
+current_emulator = "BlueStacks"
 emulator_port = 5037

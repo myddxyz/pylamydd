@@ -6,7 +6,6 @@ from utils import api_base_url
 
 sys.path.append(os.path.abspath('../'))
 
-
 class App:
 
     def __init__(self, login_page, select_brawler_page, pyla_main, brawlers, hub_menu):
@@ -35,4 +34,3 @@ class App:
             if self.brawler_data:
                 utils.save_brawler_data(self.brawler_data)
                 self.pyla_main(self.brawler_data)
-

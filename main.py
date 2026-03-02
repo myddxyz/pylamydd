@@ -1,5 +1,8 @@
 import asyncio
 import time
+import cv2
+import onnxruntime as ort
+from PIL import Image
 
 from gui.hub import Hub
 from gui.login import login
@@ -14,6 +17,15 @@ from utils import load_toml_as_dict, current_wall_model_is_latest, api_base_url,
 from utils import get_brawler_list, update_missing_brawlers_info, check_version, async_notify_user, \
     update_wall_model_classes, get_latest_wall_model_file, get_latest_version, cprint
 from window_controller import WindowController
+
+# ─── Startup ─────────────────────────────────────────────────────────
+providers = ort.get_available_providers()
+if "DmlExecutionProvider" in providers:
+    print("[PylaMydd] DirectML GPU active")
+elif "CUDAExecutionProvider" in providers:
+    print("[PylaMydd] CUDA GPU active")
+else:
+    print("[PylaMydd] Running on CPU")
 
 pyla_version = load_toml_as_dict("./cfg/general_config.toml")['pyla_version']
 
@@ -120,7 +132,7 @@ def pyla_main(data):
                     s_time = time.time()
                     c = 0
 
-                frame = self.window_controller.screenshot()
+                frame_np = self.window_controller.screenshot_numpy()
 
                 _, last_ft = self.window_controller.get_latest_frame()
                 if last_ft > 0 and (time.time() - last_ft) > self.window_controller.FRAME_STALE_TIMEOUT:
@@ -129,11 +141,11 @@ def pyla_main(data):
                     time.sleep(1)
                     continue
 
-                self.manage_time_tasks(frame)
+                self.manage_time_tasks(frame_np)
 
 
                 brawler = self.Stage_manager.brawlers_pick_data[0]['brawler']
-                self.Play.main(frame, brawler)
+                self.Play.main(frame_np, brawler)
                 c += 1
 
                 if self.max_ips:

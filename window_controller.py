@@ -141,6 +141,47 @@ class WindowController:
 
         return Image.fromarray(frame_rgb)
 
+    def screenshot_numpy(self):
+        """Return raw BGR numpy frame — zero conversion overhead.
+        Use this in the hot game loop instead of screenshot() for max performance."""
+        c_time = time.time()
+        if c_time - self.time_since_checked_if_brawl_stars_crashed > self.check_if_brawl_stars_crashed_timer:
+            if self.device.app_current().package != BRAWL_STARS_PACKAGE:
+                print("Brawl stars has crashed ! Restarting...")
+                self.device.app_start(BRAWL_STARS_PACKAGE)
+                time.sleep(3)
+                self.time_since_checked_if_brawl_stars_crashed = time.time()
+            else:
+                self.time_since_checked_if_brawl_stars_crashed = c_time
+        frame, frame_time = self.get_latest_frame()
+
+        deadline = time.time() + 15
+        while frame is None:
+            if time.time() > deadline:
+                raise ConnectionError(
+                    "No frame received from scrcpy within 15s. "
+                    "Check USB/emulator connection."
+                )
+            print("Waiting for first frame...")
+            time.sleep(0.1)
+            frame, frame_time = self.get_latest_frame()
+
+        age = time.time() - frame_time
+        if frame_time > 0 and age > self.FRAME_STALE_TIMEOUT:
+            print(f"WARNING: scrcpy frame is {age:.1f}s stale -- feed may be frozen")
+
+        # Initialize ratios if needed (first frame)
+        if not self.width or not self.height:
+            self.width = frame.shape[1]
+            self.height = frame.shape[0]
+            self.width_ratio = self.width / brawl_stars_width
+            self.height_ratio = self.height / brawl_stars_height
+            self.joystick_x, self.joystick_y = 220 * self.width_ratio, 870 * self.height_ratio
+            self.scale_factor = min(self.width_ratio, self.height_ratio)
+
+        # Return BGR numpy directly — no cvtColor, no PIL conversion
+        return frame
+
     def touch_down(self, x, y, pointer_id=0):
         # We explicitly pass the pointer_id
         self.scrcpy_client.control.touch(int(x), int(y), scrcpy.ACTION_DOWN, pointer_id)

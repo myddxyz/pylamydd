@@ -1,3 +1,4 @@
+setuptools
 asyncio~=3.4.3
 aiohttp~=3.12.13
 customtkinter~=5.2.2
@@ -8,17 +9,12 @@ pyautogui~=0.9.54
 pygetwindow~=0.0.9
 requests~=2.32.4
 toml~=0.10.2
-torch
 pillow~=11.2.1
 discord.py
 shapely~=2.1.1
-ultralytics~=8.3.233
-bettercam~=1.0.0
 packaging~=25.0
 pywin32
 pure-python-adb
 google-play-scraper~=1.2.7
 easyocr~=1.7.2
-scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0
-adbutils~=2.12.0
 av~=12.3.0

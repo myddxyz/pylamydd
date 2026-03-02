@@ -14,7 +14,7 @@ import discord
 import cv2
 import numpy as np
 from packaging import version
-import bettercam
+
 import time
 import easyocr
 
@@ -40,10 +40,16 @@ def extract_text_and_positions(image_path):
 
 class DefaultEasyOCR:
     def __init__(self):
-        self.reader = easyocr.Reader(['en'])
+        self._reader = None
+        self._reader = None
+
+    def _ensure_loaded(self):
+        if self._reader is None:
+            self._reader = easyocr.Reader(['en'], gpu=False)
 
     def readtext(self, image_input):
-        return self.reader.readtext(image_input)
+        self._ensure_loaded()
+        return self._reader.readtext(image_input)
 
 def load_toml_as_dict(file_path):
     if os.path.exists(file_path):
@@ -57,9 +63,13 @@ reader = DefaultEasyOCR()
 api_base_url = "localhost"
 brawlers_info_file_path = "cfg/brawlers_info.json"
 
-def count_hsv_pixels(pil_image, low_hsv, high_hsv):
-    opencv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
-    hsv_image = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2HSV)
+def count_hsv_pixels(image_input, low_hsv, high_hsv):
+    """Count pixels in HSV range."""
+    if isinstance(image_input, np.ndarray):
+        bgr_image = image_input  # Already BGR numpy
+    else:
+        bgr_image = cv2.cvtColor(np.array(image_input), cv2.COLOR_RGB2BGR)
+    hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv_image, np.array(low_hsv), np.array(high_hsv))
     pixel_count = np.count_nonzero(mask)
     return pixel_count

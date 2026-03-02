@@ -15,12 +15,16 @@ class LobbyAutomation:
         self.window_controller = window_controller
 
     def check_for_idle(self, frame):
-        screenshot = frame
         wr = self.window_controller.width_ratio
         hr = self.window_controller.height_ratio
-        screenshot = screenshot.crop(
-            (int(400 * wr), int(380 * hr), int(1500 * wr), int(700 * hr)))
-        gray_pixels = count_hsv_pixels(screenshot, (0, 0, 55), (10, 15, 77))
+        # Numpy array crop: frame[y1:y2, x1:x2] (works with both PIL and numpy)
+        if isinstance(frame, np.ndarray):
+            x1, y1 = int(400 * wr), int(380 * hr)
+            x2, y2 = int(1500 * wr), int(700 * hr)
+            crop = frame[y1:y2, x1:x2]
+        else:
+            crop = frame.crop((int(400 * wr), int(380 * hr), int(1500 * wr), int(700 * hr)))
+        gray_pixels = count_hsv_pixels(crop, (0, 0, 55), (10, 15, 77))
         if debug: print("gray pixels (if > 1000 then bot will try to unidle) :", gray_pixels)
         if gray_pixels > 1000:
             self.window_controller.click(int(535 * wr), int(615 * hr))

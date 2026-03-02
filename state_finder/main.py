@@ -41,11 +41,18 @@ def is_template_in_region(image, template_path, region):
     return max_val > 0.7
 
 
+_template_cache = {}
+
 def load_template(image_path, width, height):
+    """Load and resize template — cached after first load per resolution."""
+    cache_key = (image_path, width, height)
+    if cache_key in _template_cache:
+        return _template_cache[cache_key]
     current_width_ratio, current_height_ratio = width / orig_screen_width, height / orig_screen_height
     image = cv2.imread(image_path)
     orig_height, orig_width = image.shape[:2]
     resized_image = cv2.resize(image, (int(orig_width * current_width_ratio), int(orig_height * current_height_ratio)))
+    _template_cache[cache_key] = resized_image
     return resized_image
 
 crop_region = load_toml_as_dict("./cfg/lobby_config.toml")['lobby']['trophy_observer']
@@ -98,7 +105,7 @@ def get_in_game_state(image):
     if is_in_brawler_selection(image):
         return "brawler_selection"
 
-    if count_hsv_pixels(Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB)), (0, 0, 240), (180, 20, 255)) > 300000:
+    if count_hsv_pixels(image, (0, 0, 240), (180, 20, 255)) > 300000:
         return "play_store"
 
     if is_in_brawl_pass(image) or is_in_star_road(image):
@@ -159,9 +166,17 @@ def is_in_star_drop(image):
     return False
 
 def get_state(screenshot):
-    if super_debug: screenshot.save(f"./debug_frames/state_screenshot_{len(os.listdir('./debug_frames'))}.png")
-    screenshot = np.array(screenshot)
-    screenshot_bgr = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
+    """Accepts PIL image or BGR numpy array."""
+    if isinstance(screenshot, np.ndarray):
+        # Already numpy BGR — use directly
+        if super_debug:
+            cv2.imwrite(f"./debug_frames/state_screenshot_{len(os.listdir('./debug_frames'))}.png", screenshot)
+        screenshot_bgr = screenshot
+    else:
+        # PIL image path
+        if super_debug: screenshot.save(f"./debug_frames/state_screenshot_{len(os.listdir('./debug_frames'))}.png")
+        screenshot = np.array(screenshot)
+        screenshot_bgr = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
     state = get_in_game_state(screenshot_bgr)
     print(f"State: {state}")
     return state

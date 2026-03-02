@@ -1,5 +1,4 @@
 import sys
-
 import customtkinter as ctk
 import webbrowser
 import os
@@ -22,26 +21,37 @@ def S(value):
     """Helper to scale integer sizes based on the user's screen."""
     return int(value * scale_factor)
 
+BG          = "#0D0D0D"
+SIDEBAR_BG  = "#111111"
+PANEL_BG    = "#161616"
+CARD_BG     = "#1E1E1E"
+HEADER_BG   = "#131313"
+FOOTER_BG   = "#131313"
+ACCENT      = "#C80000"
+ACCENT_HVR  = "#E61A1A"
+BTN_OFF     = "#2A2A2A"
+BTN_HVR     = "#3A3A3A"
+TEXT_PRI     = "#FFFFFF"
+TEXT_SEC     = "#888888"
+TEXT_DIM     = "#555555"
+DIVIDER     = "#2A2A2A"
+SECTION_HDR  = "#C80000"
+GREEN       = "#2ecc71"
+GOLD        = "#FFD700"
 
 class Hub:
     """
-    Updated, more user-friendly interface for the Pyla bot.
+    Pyla Control Center – sidebar-based UI.
     """
 
-    def __init__(self,
-                 version_str,
-                 latest_version_str,
-                 correct_zoom=True,
-                 on_close_callback=None):
+    def __init__(self, version_str, latest_version_str,
+                 correct_zoom=True, on_close_callback=None):
 
         self.version_str = version_str
         self.latest_version_str = latest_version_str
         self.correct_zoom = correct_zoom
         self.on_close_callback = on_close_callback
 
-        # -----------------------------------------------------------------------------------------
-        # Load configs
-        # -----------------------------------------------------------------------------------------
         self.bot_config_path = "cfg/bot_config.toml"
         self.time_tresholds_path = "cfg/time_tresholds.toml"
         self.match_history_path = "cfg/match_history.toml"
@@ -52,10 +62,6 @@ class Hub:
         self.match_history = load_toml_as_dict(self.match_history_path)
         self.general_config = load_toml_as_dict(self.general_config_path)
 
-        # -----------------------------------------------------------------------------------------
-        # Defaults
-        # -----------------------------------------------------------------------------------------
-        # Bot config defaults
         self.bot_config.setdefault("gamemode_type", 3)
         self.bot_config.setdefault("gamemode", "brawlball")
         self.bot_config.setdefault("bot_uses_gadgets", "yes")
@@ -65,8 +71,6 @@ class Hub:
         self.bot_config.setdefault("unstuck_movement_delay", 3.0)
         self.bot_config.setdefault("unstuck_movement_hold_time", 1.5)
 
-
-        # Time thresholds defaults
         self.time_tresholds.setdefault("state_check", 3)
         self.time_tresholds.setdefault("no_detections", 10)
         self.time_tresholds.setdefault("idle", 10)
@@ -74,7 +78,6 @@ class Hub:
         self.time_tresholds.setdefault("gadget", 0.5)
         self.time_tresholds.setdefault("hypercharge", 2)
 
-        # General config defaults
         self.general_config.setdefault("max_ips", "auto")
         self.general_config.setdefault("super_debug", "yes")
         self.general_config.setdefault("cpu_or_gpu", "auto")
@@ -82,79 +85,553 @@ class Hub:
         self.general_config.setdefault("trophies_multiplier", 1.0)
         self.general_config.setdefault("current_emulator", "LDPlayer")
 
-        # -----------------------------------------------------------------------------------------
-        # Appearance
-        # -----------------------------------------------------------------------------------------
         ctk.set_appearance_mode("dark")
 
-        # For showing tooltips in Toplevel windows
-        # For showing tooltips
         self.tooltip_window = None
         self._tooltip_after_id = None
         self._tooltip_owner = None
         self._tooltip_text = ""
 
-        # -----------------------------------------------------------------------------------------
-        # Main window
-        # -----------------------------------------------------------------------------------------
         self.app = ctk.CTk()
-        self.app.title(f"Pyla Hub – {self.version_str}")
-        self.app.geometry(f"{S(1000)}x{S(750)}")
+        self.app.title("PYLAMYDD CONTROL CENTER")
+        self.app.geometry(f"{S(1020)}x{S(700)}")
         self.app.resizable(False, False)
+        self.app.configure(fg_color=BG)
 
-        # Hide tooltip on "global" interactions (tab switch, clicks, scroll, key press, focus loss, etc.)
         for seq in ("<ButtonPress>", "<MouseWheel>", "<KeyPress>", "<FocusOut>"):
             self.app.bind_all(seq, self._hide_tooltip, add="+")
-        self.app.bind("<Configure>", self._hide_tooltip, add="+")  # window move/resize
+        self.app.bind("<Configure>", self._hide_tooltip, add="+")
 
-        # -----------------------------------------------------------------------------------------
-        # Main TabView
-        # -----------------------------------------------------------------------------------------
-        self.tabview = ctk.CTkTabview(
-            self.app,
-            width=S(980),
-            height=S(640),
-            corner_radius=S(10)
-        )
-        self.tabview.pack(pady=S(10), padx=S(10), fill="x", expand=False)
+        self._build_header()
+        self._build_footer()
+        self._build_sidebar()
+        self._build_content_area()
 
-        # Enlarge the segmented tab buttons
-        self.tabview._segmented_button.configure(
-            corner_radius=S(10),
-            border_width=2,
-            fg_color="#4A4A4A",
-            selected_color="#AA2A2A",
-            selected_hover_color="#BB3A3A",
-            unselected_color="#333333",
-            unselected_hover_color="#555555",
-            text_color="#FFFFFF",
-            font=("Arial", S(16), "bold"),
-            height=S(40)
-        )
+        self.panels = {}
+        self._build_dashboard_panel()
+        self._build_settings_panel()
 
-        # Add tabs
-        self.tab_overview = self.tabview.add("Overview")
-        self.tab_additional = self.tabview.add("Additional Settings")
-        self.tab_timers = self.tabview.add("Timers")
-        self.tab_history = self.tabview.add("Match History")
+        self._show_panel("dashboard")
+        self._set_active_sidebar(0)
 
-        # Init each tab
-        self._init_overview_tab()
-        self._init_additional_tab()
-        self._init_timers_tab()
-        self._init_history_tab()
-
-        # Main loop
         self.app.mainloop()
 
-    # ---------------------------------------------------------------------------------------------
-    #  Tooltip Handler
-    # ---------------------------------------------------------------------------------------------
+    def _build_header(self):
+        header = ctk.CTkFrame(self.app, fg_color=HEADER_BG, height=S(40), corner_radius=0)
+        header.pack(fill="x", side="top")
+        header.pack_propagate(False)
+
+        logo_frame = ctk.CTkFrame(header, fg_color="transparent")
+        logo_frame.pack(side="left", padx=S(12))
+        ctk.CTkLabel(logo_frame, text="PYLAMYDD", font=("Arial", S(16), "bold"),
+                     text_color=TEXT_PRI).pack(side="top")
+        ctk.CTkFrame(logo_frame, fg_color=ACCENT, height=S(3),
+                     width=S(60), corner_radius=0).pack(side="top")
+
+        ctk.CTkLabel(header, text="CONTROL CENTER",
+                     font=("Arial", S(12)), text_color=TEXT_SEC
+                     ).pack(side="left", padx=S(10))
+
+        badge = ctk.CTkFrame(header, fg_color="#1E1E1E", corner_radius=S(12),
+                             border_width=1, border_color="#333333")
+        badge.pack(side="right", padx=S(15))
+        ctk.CTkLabel(badge, text="  ● IDLE  ", font=("Arial", S(10)),
+                     text_color=TEXT_SEC).pack(padx=S(4), pady=S(2))
+
+    def _build_footer(self):
+        footer = ctk.CTkFrame(self.app, fg_color=FOOTER_BG, height=S(28), corner_radius=0)
+        footer.pack(fill="x", side="bottom")
+        footer.pack_propagate(False)
+        ctk.CTkLabel(footer, text="●  DISCONNECTED", font=("Arial", S(9)),
+                     text_color=GOLD).pack(side="left", padx=S(12))
+        ctk.CTkLabel(footer, text=f"STABLE {self.version_str}",
+                     font=("Arial", S(9)), text_color=TEXT_DIM
+                     ).pack(side="right", padx=S(12))
+
+    def _build_sidebar(self):
+        self.sidebar = ctk.CTkFrame(self.app, fg_color=SIDEBAR_BG, width=S(58),
+                                    corner_radius=0)
+        self.sidebar.pack(fill="y", side="left")
+        self.sidebar.pack_propagate(False)
+
+        icons = [
+            ("🏠", "dashboard"),
+            ("⚙", "settings"),
+        ]
+
+        self.sidebar_btns = []
+        self.sidebar_indicators = []
+
+        for i, (icon, panel_key) in enumerate(icons):
+            frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+            frame.pack(pady=(S(10) if i == 0 else S(3)))
+
+            indicator = ctk.CTkFrame(frame, fg_color="transparent",
+                                     width=S(3), height=S(36), corner_radius=0)
+            indicator.pack(side="left")
+
+            btn = ctk.CTkButton(
+                frame, text=icon, width=S(42), height=S(42),
+                fg_color="transparent", hover_color=BTN_HVR,
+                font=("Arial", S(18)),
+                command=lambda pk=panel_key, idx=i: self._on_sidebar_click(pk, idx),
+                corner_radius=S(6)
+            )
+            btn.pack(side="left", padx=S(2))
+
+            self.sidebar_btns.append(btn)
+            self.sidebar_indicators.append(indicator)
+
+        spacer = ctk.CTkFrame(self.sidebar, fg_color="transparent")
+        spacer.pack(fill="y", expand=True)
+
+        discord_link = get_discord_link()
+        discord_btn = ctk.CTkButton(
+            self.sidebar, text="💬", width=S(42), height=S(42),
+            fg_color="transparent", hover_color=BTN_HVR,
+            font=("Arial", S(18)),
+            command=lambda: webbrowser.open(discord_link),
+            corner_radius=S(6)
+        )
+        discord_btn.pack(side="bottom", pady=S(10))
+
+        ctk.CTkLabel(self.sidebar, text=f"v{self.version_str}",
+                     font=("Arial", S(8)), text_color=TEXT_DIM
+                     ).pack(side="bottom", pady=S(2))
+
+    def _on_sidebar_click(self, panel_key, idx):
+        self._show_panel(panel_key)
+        self._set_active_sidebar(idx)
+
+    def _set_active_sidebar(self, active_idx):
+        for i, (btn, indicator) in enumerate(zip(self.sidebar_btns, self.sidebar_indicators)):
+            if i == active_idx:
+                btn.configure(fg_color=CARD_BG)
+                indicator.configure(fg_color=ACCENT)
+            else:
+                btn.configure(fg_color="transparent")
+                indicator.configure(fg_color="transparent")
+
+    def _build_content_area(self):
+        self.content = ctk.CTkFrame(self.app, fg_color=PANEL_BG, corner_radius=S(10))
+        self.content.pack(fill="both", expand=True, padx=S(6), pady=S(6))
+
+    def _show_panel(self, panel_key):
+        for key, frame in self.panels.items():
+            frame.pack_forget()
+        if panel_key in self.panels:
+            self.panels[panel_key].pack(fill="both", expand=True)
+
+    def _section_header(self, parent, text):
+        frame = ctk.CTkFrame(parent, fg_color="transparent")
+        frame.pack(fill="x", padx=S(25), pady=(S(18), S(6)))
+        ctk.CTkLabel(frame, text=text.upper(), font=("Arial", S(11), "bold"),
+                     text_color=SECTION_HDR).pack(side="left")
+        ctk.CTkFrame(frame, fg_color=DIVIDER, height=1).pack(
+            side="left", fill="x", expand=True, padx=S(10))
+        return frame
+
+    def _toggle_btn(self, parent, values, current, callback):
+        """Create a row of toggle buttons."""
+        frame = ctk.CTkFrame(parent, fg_color="transparent")
+
+        btns = []
+        for val, label, disabled in values:
+            btn = ctk.CTkButton(
+                frame, text=label, width=S(140), height=S(38),
+                font=("Arial", S(13), "bold"), corner_radius=S(6),
+                fg_color=ACCENT if val == current else BTN_OFF,
+                hover_color=ACCENT_HVR if val == current else BTN_HVR,
+                text_color=TEXT_PRI if not disabled else TEXT_DIM,
+                state="disabled" if disabled else "normal",
+                command=lambda v=val: callback(v)
+            )
+            btn.pack(side="left", padx=S(5))
+            btns.append((val, btn))
+
+        def refresh(selected):
+            for v, b in btns:
+                if v == selected:
+                    b.configure(fg_color=ACCENT, hover_color=ACCENT_HVR)
+                else:
+                    b.configure(fg_color=BTN_OFF, hover_color=BTN_HVR)
+
+        return frame, refresh
+
+    def _build_dashboard_panel(self):
+        panel = ctk.CTkScrollableFrame(self.content, fg_color="transparent",
+                                       corner_radius=0)
+        self.panels["dashboard"] = panel
+
+        w_list = []
+        if not self.correct_zoom:
+            w_list.append("⚠  Windows zoom isn't 100% (DPI ≠ 96)")
+        if self.latest_version_str and version.parse(self.version_str) < version.parse(self.latest_version_str):
+            w_list.append(f"⚠  Update available: {self.latest_version_str}")
+
+        if w_list:
+            for w in w_list:
+                ctk.CTkLabel(panel, text=w, text_color="#e74c3c",
+                             font=("Arial", S(13), "bold")).pack(pady=S(3))
+
+        self._section_header(panel, "MAP ORIENTATION")
+
+        self.gamemode_type_var = tk.IntVar(value=self.bot_config["gamemode_type"])
+
+        def on_orient(val):
+            self.gamemode_type_var.set(val)
+            self.orient_refresh(val)
+            self._refresh_gm_frames()
+
+        orient_frame, self.orient_refresh = self._toggle_btn(
+            panel,
+            [(3, "Vertical", False), (5, "Horizontal", False)],
+            self.bot_config["gamemode_type"],
+            on_orient
+        )
+        orient_frame.pack(pady=S(6))
+
+        self._section_header(panel, "GAMEMODE SELECTION")
+
+        self.gamemode_var = tk.StringVar(value=self.bot_config["gamemode"])
+
+        self.gm3_frame = ctk.CTkFrame(panel, fg_color="transparent")
+        self.gm5_frame = ctk.CTkFrame(panel, fg_color="transparent")
+
+        def on_gm(val, orient):
+            self.bot_config["gamemode_type"] = orient
+            self.bot_config["gamemode"] = val
+            save_dict_as_toml(self.bot_config, self.bot_config_path)
+            self.gamemode_type_var.set(orient)
+            self.gamemode_var.set(val)
+            self.orient_refresh(orient)
+            self.gm3_refresh(val)
+            self.gm5_refresh(val)
+            self._refresh_gm_frames()
+
+        gm3_inner, self.gm3_refresh = self._toggle_btn(
+            self.gm3_frame,
+            [("brawlball", "Brawlball", False),
+             ("showdown", "Showdown", True),
+             ("other", "Other", False)],
+            self.bot_config["gamemode"],
+            lambda v: on_gm(v, 3)
+        )
+        gm3_inner.pack()
+
+        gm5_inner, self.gm5_refresh = self._toggle_btn(
+            self.gm5_frame,
+            [("basketbrawl", "Basket Brawl", False),
+             ("brawlball_5v5", "Brawlball 5v5", False)],
+            self.bot_config["gamemode"],
+            lambda v: on_gm(v, 5)
+        )
+        gm5_inner.pack()
+
+        self._refresh_gm_frames()
+
+        self._section_header(panel, "EMULATOR TARGET")
+
+        self.emu_var = tk.StringVar(value=self.general_config["current_emulator"])
+
+        def on_emu(val):
+            self.emu_var.set(val)
+            self.general_config["current_emulator"] = val
+            save_dict_as_toml(self.general_config, self.general_config_path)
+            self.emu_refresh(val)
+
+        emu_frame, self.emu_refresh = self._toggle_btn(
+            panel,
+            [("LDPlayer", "LDPlayer", False),
+             ("BlueStacks", "BlueStacks", False),
+             ("MEmu", "MEmu", False),
+             ("Others", "Others", False)],
+            self.general_config["current_emulator"],
+            on_emu
+        )
+        emu_frame.pack(pady=S(6))
+
+        start_btn = ctk.CTkButton(
+            panel, text="▶  START", width=S(260), height=S(52),
+            fg_color=ACCENT, hover_color=ACCENT_HVR,
+            font=("Arial", S(18), "bold"), corner_radius=S(8),
+            command=self._on_start
+        )
+        start_btn.pack(pady=S(25))
+
+        foot = ctk.CTkFrame(panel, fg_color="transparent")
+        foot.pack(pady=S(5))
+        ctk.CTkLabel(foot, text="Pyla is free and public.  ›  ",
+                     font=("Arial", S(11)), text_color=TEXT_DIM).pack(side="left")
+        discord_link = get_discord_link()
+        link = ctk.CTkLabel(foot, text="Join Community", font=("Arial", S(11)),
+                            text_color="#5865F2", cursor="hand2")
+        link.pack(side="left")
+        link.bind("<Button-1>", lambda e: webbrowser.open(discord_link))
+
+    def _refresh_gm_frames(self):
+        self.gm3_frame.pack_forget()
+        self.gm5_frame.pack_forget()
+        if self.gamemode_type_var.get() == 3:
+            self.gm3_frame.pack(pady=S(6))
+        else:
+            self.gm5_frame.pack(pady=S(6))
+
+    def _build_settings_panel(self):
+        panel = ctk.CTkFrame(self.content, fg_color="transparent", corner_radius=0)
+        self.panels["settings"] = panel
+
+        settings_sidebar = ctk.CTkFrame(panel, fg_color=CARD_BG, width=S(160),
+                                        corner_radius=0)
+        settings_sidebar.pack(fill="y", side="left", padx=0)
+        settings_sidebar.pack_propagate(False)
+
+        ctk.CTkLabel(settings_sidebar, text="SETTINGS",
+                     font=("Arial", S(11), "bold"), text_color=SECTION_HDR
+                     ).pack(anchor="w", padx=S(15), pady=(S(15), S(8)))
+
+        sub_pages = {}
+        sub_btns = []
+
+        def show_sub(key, idx):
+            for k, f in sub_pages.items():
+                f.pack_forget()
+            if key in sub_pages:
+                sub_pages[key].pack(fill="both", expand=True)
+            for j, b in enumerate(sub_btns):
+                if j == idx:
+                    b.configure(fg_color=BTN_OFF)
+                else:
+                    b.configure(fg_color="transparent")
+
+        items = [("General", "general"), ("Timers", "timers"), ("Match History", "history")]
+        for i, (label, key) in enumerate(items):
+            btn = ctk.CTkButton(
+                settings_sidebar, text=f"  {label}", anchor="w",
+                fg_color="transparent", hover_color=BTN_HVR,
+                text_color=TEXT_PRI, font=("Arial", S(12)),
+                width=S(140), height=S(32), corner_radius=S(4),
+                command=lambda k=key, idx=i: show_sub(k, idx)
+            )
+            btn.pack(padx=S(8), pady=S(2))
+            sub_btns.append(btn)
+
+        settings_content = ctk.CTkFrame(panel, fg_color="transparent")
+        settings_content.pack(fill="both", expand=True)
+
+        general = ctk.CTkScrollableFrame(settings_content, fg_color="transparent")
+        sub_pages["general"] = general
+
+        self._section_header(general, "DETECTION")
+        self._setting_row(general, "Minimum Movement Delay", "minimum_movement_delay",
+                         float, "How long the bot maintains a movement before changing it.", False)
+        self._setting_row(general, "Wall Detection Confidence", "wall_detection_confidence",
+                         float, "0-1 scale: how sure must the bot be to detect a wall.", False)
+        self._setting_row(general, "Entity Detection Confidence", "entity_detection_confidence",
+                         float, "0-1 scale: how sure to detect player/enemies/allies.", False)
+
+        self._section_header(general, "UNSTUCK")
+        self._setting_row(general, "Unstuck Movement Delay", "unstuck_movement_delay",
+                         float, "How long before trying to unstick.", False)
+        self._setting_row(general, "Unstuck Duration", "unstuck_movement_hold_time",
+                         float, "How long the bot tries a different direction.", False)
+
+        self._section_header(general, "PERFORMANCE")
+
+        perf_frame = ctk.CTkFrame(general, fg_color="transparent")
+        perf_frame.pack(fill="x", padx=S(25), pady=S(6))
+        ctk.CTkLabel(perf_frame, text="Hardware Acceleration",
+                     font=("Arial", S(13), "bold"), text_color=TEXT_PRI).pack(side="left")
+        ctk.CTkLabel(perf_frame, text="Use GPU for smoother processing.",
+                     font=("Arial", S(10)), text_color=TEXT_SEC).pack(side="left", padx=S(10))
+
+        gpu_var = tk.StringVar(value=self.general_config["cpu_or_gpu"])
+        gpu_switch = ctk.CTkSwitch(
+            perf_frame, text="", variable=gpu_var,
+            onvalue="auto", offvalue="cpu",
+            progress_color=ACCENT, button_color=TEXT_PRI,
+            command=lambda: self._save_general("cpu_or_gpu", gpu_var.get())
+        )
+        gpu_switch.pack(side="right")
+        if gpu_var.get() == "auto":
+            gpu_switch.select()
+
+        self._section_header(general, "THRESHOLDS")
+        self._setting_row(general, "Super Detection Pixels", "super_pixels_minimum",
+                         float, "Yellow pixels needed to detect super ready.", False)
+        self._setting_row(general, "Gadget Detection Pixels", "gadget_pixels_minimum",
+                         float, "Green pixels needed to detect gadget ready.", False)
+        self._setting_row(general, "Hypercharge Detection Pixels", "hypercharge_pixels_minimum",
+                         float, "Purple pixels needed to detect hypercharge ready.", False)
+        self._setting_row(general, "Max IPS", "max_ips",
+                         lambda s: s if s.lower() == "auto" else int(s),
+                         "'auto' or integer. Max images per second.", True)
+        self._setting_row(general, "Trophies Multiplier", "trophies_multiplier",
+                         int, "Set to 2 for Brawl Arena etc.", True)
+
+        timers = ctk.CTkScrollableFrame(settings_content, fg_color="transparent")
+        sub_pages["timers"] = timers
+
+        self._section_header(timers, "TIMER SETTINGS")
+
+        timer_configs = [
+            ("super", "Super Check Delay", "How often the bot checks if super is ready."),
+            ("hypercharge", "Hypercharge Check Delay", "How often the bot checks hypercharge."),
+            ("gadget", "Gadget Check Delay", "How often the bot checks gadget."),
+            ("wall_detection", "Wall Detection Delay", "How often the bot detects walls."),
+            ("no_detection_proceed", "No Detection Proceed", "How often to press Q when player not found."),
+        ]
+        for param, label, tip in timer_configs:
+            self._timer_row(timers, param, label, tip)
+
+        history = ctk.CTkScrollableFrame(settings_content, fg_color="transparent")
+        sub_pages["history"] = history
+        self._section_header(history, "MATCH HISTORY")
+        self._build_history_content(history)
+
+        show_sub("general", 0)
+
+    def _save_general(self, key, value):
+        self.general_config[key] = value
+        save_dict_as_toml(self.general_config, self.general_config_path)
+
+    def _setting_row(self, parent, label, config_key, convert_func, tooltip,
+                     use_general=False):
+        """A single setting row: label + entry."""
+        row = ctk.CTkFrame(parent, fg_color="transparent")
+        row.pack(fill="x", padx=S(25), pady=S(4))
+
+        cfg = self.general_config if use_general else self.bot_config
+        path = self.general_config_path if use_general else self.bot_config_path
+
+        ctk.CTkLabel(row, text=label, font=("Arial", S(12)),
+                     text_color=TEXT_PRI).pack(side="left")
+
+        var = tk.StringVar(value=str(cfg[config_key]))
+
+        def save(*_):
+            v = var.get().strip()
+            if v == "":
+                var.set(str(cfg[config_key]))
+                return
+            try:
+                cfg[config_key] = convert_func(v)
+                save_dict_as_toml(cfg, path)
+            except ValueError:
+                var.set(str(cfg[config_key]))
+
+        entry = ctk.CTkEntry(row, textvariable=var, width=S(90),
+                             font=("Arial", S(12)), fg_color=CARD_BG,
+                             border_color=DIVIDER)
+        entry.pack(side="right", padx=S(5))
+        entry.bind("<FocusOut>", save)
+        entry.bind("<Return>", save)
+
+        if tooltip:
+            self.attach_tooltip(entry, tooltip)
+
+    def _timer_row(self, parent, param, label, tooltip):
+        """Timer row with slider + entry."""
+        row = ctk.CTkFrame(parent, fg_color="transparent")
+        row.pack(fill="x", padx=S(25), pady=S(6))
+
+        ctk.CTkLabel(row, text=label, font=("Arial", S(12)),
+                     text_color=TEXT_PRI).pack(side="left")
+
+        val_var = tk.StringVar(value=str(self.time_tresholds[param]))
+
+        entry = ctk.CTkEntry(row, textvariable=val_var, width=S(60),
+                             font=("Arial", S(11)), fg_color=CARD_BG,
+                             border_color=DIVIDER)
+        entry.pack(side="right", padx=S(5))
+
+        sld = ctk.CTkSlider(
+            row, from_=0.1, to=10, number_of_steps=99, width=S(180),
+            progress_color=ACCENT, button_color=TEXT_PRI,
+            command=lambda v: self._on_timer_slide(v, val_var, param)
+        )
+        sld.pack(side="right", padx=S(5))
+
+        try:
+            init = float(self.time_tresholds[param])
+            sld.set(max(0.1, min(10, init)))
+        except:
+            sld.set(1.0)
+
+        def on_entry_save(_):
+            try:
+                val = float(val_var.get().strip())
+                self.time_tresholds[param] = val
+                save_dict_as_toml(self.time_tresholds, self.time_tresholds_path)
+                sld.set(max(0.1, min(10, val)))
+            except ValueError:
+                val_var.set(str(self.time_tresholds[param]))
+
+        entry.bind("<FocusOut>", on_entry_save)
+        entry.bind("<Return>", on_entry_save)
+
+        if tooltip:
+            self.attach_tooltip(sld, tooltip)
+            self.attach_tooltip(entry, tooltip)
+
+    def _on_timer_slide(self, value, var, param):
+        v = float(value)
+        var.set(f"{v:.2f}")
+        self.time_tresholds[param] = v
+        save_dict_as_toml(self.time_tresholds, self.time_tresholds_path)
+
+    def _build_history_content(self, parent):
+        """Build match history grid."""
+        max_cols = 4
+        row_idx = 0
+        col_idx = 0
+        icon_size = S(80)
+
+        grid_frame = ctk.CTkFrame(parent, fg_color="transparent")
+        grid_frame.pack(fill="both", expand=True, padx=S(10), pady=S(5))
+
+        for brawler, stats in self.match_history.items():
+            if brawler == "total":
+                continue
+            icon_path = f"./api/assets/brawler_icons/{brawler}.png"
+            icon_img = None
+            if os.path.exists(icon_path):
+                pil_img = Image.open(icon_path).resize((icon_size, icon_size))
+                icon_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img,
+                                        size=(icon_size, icon_size))
+
+            total = stats["victory"] + stats["defeat"]
+            wr = round(100 * stats["victory"] / total, 1) if total else 0
+            lr = round(100 * stats["defeat"] / total, 1) if total else 0
+
+            cell = ctk.CTkFrame(grid_frame, fg_color=CARD_BG, corner_radius=S(8),
+                                width=S(160), height=S(180))
+            cell.grid(row=row_idx, column=col_idx, padx=S(8), pady=S(8))
+
+            if icon_img:
+                ctk.CTkLabel(cell, image=icon_img, text="").pack(pady=S(4))
+
+            ctk.CTkLabel(cell, text=f"{brawler}\n{total} games",
+                         font=("Arial", S(12), "bold"),
+                         text_color=TEXT_PRI).pack()
+
+            stats_f = ctk.CTkFrame(cell, fg_color="transparent")
+            stats_f.pack(pady=S(3))
+            ctk.CTkLabel(stats_f, text=f"{wr}%", font=("Arial", S(11), "bold"),
+                         text_color=GREEN).pack(side="left", padx=S(3))
+            ctk.CTkLabel(stats_f, text=f"{lr}%", font=("Arial", S(11), "bold"),
+                         text_color="#e74c3c").pack(side="left", padx=S(3))
+
+            col_idx += 1
+            if col_idx >= max_cols:
+                col_idx = 0
+                row_idx += 1
+
     def _pointer_over_widget(self, widget) -> bool:
         if widget is None or not widget.winfo_exists():
             return False
         try:
-            px, py = widget.winfo_pointerx(), widget.winfo_pointery()
+            px, py = widget.winfo_pointerx(), widget.winfo_rooty()
             x, y = widget.winfo_rootx(), widget.winfo_rooty()
             w, h = widget.winfo_width(), widget.winfo_height()
             return x <= px <= x + w and y <= py <= y + h
@@ -162,839 +639,60 @@ class Hub:
             return False
 
     def _hide_tooltip(self, _event=None):
-        # cancel delayed show if pending
         if self._tooltip_after_id is not None:
             try:
                 self.app.after_cancel(self._tooltip_after_id)
             except Exception:
                 pass
             self._tooltip_after_id = None
-
-        # destroy current tooltip window
         if self.tooltip_window is not None:
             try:
                 self.tooltip_window.destroy()
             except Exception:
                 pass
             self.tooltip_window = None
-
         self._tooltip_owner = None
         self._tooltip_text = ""
 
     def attach_tooltip(self, widget, text, delay_ms: int = 250):
-        """
-        Robust tooltip:
-        - shows after delay
-        - hides on Leave, Unmap (tab switch), Destroy, clicks/scroll/keys (via global binds)
-        - prevents stuck tooltips when switching tabs
-        """
-
         def schedule_show(event=None):
-            # reset any existing tooltip
             self._hide_tooltip()
-
             self._tooltip_owner = widget
             self._tooltip_text = text
 
             def do_show():
-                # widget may have disappeared / tab switched
                 if (self._tooltip_owner is None
                         or not self._tooltip_owner.winfo_exists()
                         or not self._tooltip_owner.winfo_viewable()
                         or not self._pointer_over_widget(self._tooltip_owner)):
                     self._hide_tooltip()
                     return
-
-                # create tooltip
                 self.tooltip_window = ctk.CTkToplevel(self.app)
                 self.tooltip_window.overrideredirect(True)
                 self.tooltip_window.attributes("-topmost", True)
-
-                # position near cursor
                 px = self.app.winfo_pointerx()
                 py = self.app.winfo_pointery()
                 self.tooltip_window.geometry(f"+{px + 12}+{py + 12}")
-
                 label = ctk.CTkLabel(
-                    self.tooltip_window,
-                    text=self._tooltip_text,
-                    fg_color="#333333",
-                    text_color="#FFFFFF",
-                    corner_radius=S(6),
-                    font=("Arial", S(12))
+                    self.tooltip_window, text=self._tooltip_text,
+                    fg_color=CARD_BG, text_color=TEXT_PRI,
+                    corner_radius=S(6), font=("Arial", S(11))
                 )
                 label.pack(padx=S(6), pady=S(4))
-
-                # if mouse enters tooltip itself, hide (avoids "stuck" hovering on tooltip)
                 self.tooltip_window.bind("<Enter>", self._hide_tooltip)
                 self.tooltip_window.bind("<Leave>", self._hide_tooltip)
 
             self._tooltip_after_id = self.app.after(delay_ms, do_show)
 
-        def on_leave(_event=None):
+        def on_leave(_=None):
             self._hide_tooltip()
 
-        # Bindings
         widget.bind("<Enter>", schedule_show, add="+")
         widget.bind("<Leave>", on_leave, add="+")
-        widget.bind("<Unmap>", on_leave, add="+")  # IMPORTANT: tab switching / frame hidden
-        widget.bind("<Destroy>", on_leave, add="+")  # safety
-        widget.bind("<ButtonPress>", on_leave, add="+")  # click on the widget -> hide
+        widget.bind("<Unmap>", on_leave, add="+")
+        widget.bind("<Destroy>", on_leave, add="+")
+        widget.bind("<ButtonPress>", on_leave, add="+")
 
-    # ---------------------------------------------------------------------------------------------
-    #  Overview Tab
-    # ---------------------------------------------------------------------------------------------
-    def _init_overview_tab(self):
-        frame = self.tab_overview
-
-        container = ctk.CTkFrame(frame, fg_color="transparent")
-        container.pack(expand=True, fill="both")
-
-        row_ = 0
-
-        # -----------------------------------------------------------------
-        # 1) Warnings at the top (bigger, red), if any
-        # -----------------------------------------------------------------
-        w_list = []
-        if not self.correct_zoom:
-            w_list.append("Warning: Your Windows zoom isn't 100% (DPI != 96).")
-        if self.latest_version_str and version.parse(self.version_str) < version.parse(self.latest_version_str):
-            w_list.append(f"Warning: You are not on the latest version ({self.latest_version_str}).")
-
-        if w_list:
-            warn_text = "\n".join(w_list)
-            warn_label = ctk.CTkLabel(
-                container,
-                text=warn_text,
-                text_color="#e74c3c",
-                font=("Arial", S(16), "bold")
-            )
-            warn_label.grid(row=row_, column=0, columnspan=2, pady=S(10))
-            row_ += 1
-
-        # -----------------------------------------------------------------
-        # 2) Map Orientation selection
-        # -----------------------------------------------------------------
-        self.gamemode_type_var = tk.IntVar(value=self.bot_config["gamemode_type"])
-
-        orientation_frame = ctk.CTkFrame(container, fg_color="transparent")
-        orientation_frame.grid(row=row_, column=0, columnspan=2, pady=S(10))
-
-        label_type = ctk.CTkLabel(
-            orientation_frame,
-            text="Map Orientation:",
-            font=("Arial", S(20), "bold")
-        )
-        label_type.pack(side="left", padx=S(15))
-
-        def set_gamemode_type(t):
-            """Only change the local var & refresh everything so frames swap."""
-            self.gamemode_type_var.set(t)
-            self._refresh_gamemode_buttons()
-
-        self.btn_type_vertical = ctk.CTkButton(
-            orientation_frame,
-            text="Vertical",
-            command=lambda: set_gamemode_type(3),
-            font=("Arial", S(16), "bold"),
-            corner_radius=S(6),
-            width=S(120),
-            height=S(40)
-        )
-        self.btn_type_vertical.pack(side="left", padx=S(10))
-
-        self.btn_type_horizontal = ctk.CTkButton(
-            orientation_frame,
-            text="Horizontal",
-            command=lambda: set_gamemode_type(5),
-            font=("Arial", S(16), "bold"),
-            corner_radius=S(6),
-            width=S(120),
-            height=S(40)
-        )
-        self.btn_type_horizontal.pack(side="left", padx=S(10))
-
-        row_ += 1
-
-        # -----------------------------------------------------------------
-        # 3) Gamemode Selection as rectangular buttons
-        # -----------------------------------------------------------------
-        gm_label = ctk.CTkLabel(container, text="Select Gamemode:", font=("Arial", S(20), "bold"))
-        gm_label.grid(row=row_, column=0, columnspan=2, pady=S(10))
-        row_ += 1
-
-        gm_buttons_frame = ctk.CTkFrame(container, fg_color="transparent")
-        gm_buttons_frame.grid(row=row_, column=0, columnspan=2, pady=S(10))
-
-        self.gm3_frame = ctk.CTkFrame(gm_buttons_frame, fg_color="transparent")
-        self.gm5_frame = ctk.CTkFrame(gm_buttons_frame, fg_color="transparent")
-
-        self.gamemode_var = tk.StringVar(value=self.bot_config["gamemode"])
-
-        def create_gamemode_button(parent, gm_value, text_display, disabled=False, orientation=3):
-            """Creates a rectangular toggle button for a gamemode."""
-
-            def on_click():
-                if disabled:
-                    return
-                # Set orientation + gamemode in config
-                self.bot_config["gamemode_type"] = orientation
-                self.bot_config["gamemode"] = gm_value
-                save_dict_as_toml(self.bot_config, self.bot_config_path)
-
-                self.gamemode_type_var.set(orientation)
-                self.gamemode_var.set(gm_value)
-                self._refresh_gamemode_buttons()
-
-            btn = ctk.CTkButton(
-                parent,
-                text=text_display,
-                command=on_click,
-                corner_radius=S(6),
-                width=S(150),
-                height=S(40),
-                font=("Arial", S(16), "bold"),
-                state=("disabled" if disabled else "normal")
-            )
-            return btn
-
-        # For type=3 (vertical)
-        self.rb_brawlball_3 = create_gamemode_button(
-            self.gm3_frame, "brawlball", "Brawlball", orientation=3
-        )
-        self.rb_showdown_3 = create_gamemode_button(
-            self.gm3_frame, "showdown", "Showdown (Disabled)", disabled=True, orientation=3
-        )
-        self.rb_other_3 = create_gamemode_button(
-            self.gm3_frame, "other", "Other", orientation=3
-        )
-
-        self.rb_brawlball_3.grid(row=0, column=0, padx=S(10), pady=S(5))
-        self.rb_showdown_3.grid(row=0, column=1, padx=S(10), pady=S(5))
-        self.rb_other_3.grid(row=0, column=2, padx=S(10), pady=S(5))
-
-        # For type=5 (horizontal)
-        self.rb_basketbrawl_5 = create_gamemode_button(
-            self.gm5_frame, "basketbrawl", "Basket Brawl", orientation=5
-        )
-        self.rb_bb5v5_5 = create_gamemode_button(
-            self.gm5_frame, "brawlball_5v5", "Brawlball 5v5", orientation=5
-        )
-
-        self.rb_basketbrawl_5.grid(row=0, column=0, padx=S(10), pady=S(5))
-        self.rb_bb5v5_5.grid(row=0, column=1, padx=S(10), pady=S(5))
-
-        def refresh_gm_buttons():
-            """Refresh button colors to highlight the currently selected gamemode."""
-            gm_now = self.gamemode_var.get()
-
-            def set_button_color(btn, val):
-                if val == gm_now:
-                    btn.configure(fg_color="#AA2A2A", hover_color="#BB3A3A")
-                else:
-                    btn.configure(fg_color="#333333", hover_color="#BB3A3A")
-
-            # For vertical set
-            set_button_color(self.rb_brawlball_3, "brawlball")
-            set_button_color(self.rb_showdown_3, "showdown")
-            set_button_color(self.rb_other_3, "other")
-
-            # For horizontal set
-            set_button_color(self.rb_basketbrawl_5, "basketbrawl")
-            set_button_color(self.rb_bb5v5_5, "brawlball_5v5")
-
-        def refresh_orientation_buttons():
-            """Refresh the orientation buttons' color based on self.gamemode_type_var."""
-            t = self.gamemode_type_var.get()
-            if t == 3:
-                self.btn_type_vertical.configure(fg_color="#AA2A2A", hover_color="#BB3A3A")
-                self.btn_type_horizontal.configure(fg_color="#333333", hover_color="#BB3A3A")
-            else:
-                self.btn_type_vertical.configure(fg_color="#333333", hover_color="#BB3A3A")
-                self.btn_type_horizontal.configure(fg_color="#AA2A2A", hover_color="#BB3A3A")
-
-        self._refresh_orientation_buttons = refresh_orientation_buttons
-
-        def _refresh_gm_frames():
-            """Show/hide frames depending on orientation."""
-            self.gm3_frame.pack_forget()
-            self.gm5_frame.pack_forget()
-
-            if self.gamemode_type_var.get() == 3:
-                self.gm3_frame.pack(side="top")
-            else:
-                self.gm5_frame.pack(side="top")
-
-        def full_refresh():
-            self._refresh_orientation_buttons()
-            _refresh_gm_frames()
-            refresh_gm_buttons()
-
-        self._refresh_gamemode_buttons = full_refresh
-        full_refresh()
-
-        row_ += 1
-
-        # -----------------------------------------------------------------
-        # 4) Emulator Selection (3 rectangular buttons)
-        # -----------------------------------------------------------------
-        emulator_label = ctk.CTkLabel(container, text="Select Emulator:", font=("Arial", S(20), "bold"))
-        emulator_label.grid(row=row_, column=0, columnspan=2, pady=S(10))
-        row_ += 1
-
-        self.emulator_frame = ctk.CTkFrame(container, fg_color="transparent")
-        self.emulator_frame.grid(row=row_, column=0, columnspan=2, pady=S(10))
-        row_ += 1
-
-        self.emu_var = tk.StringVar(value=self.general_config["current_emulator"])  # default
-
-        def handle_emulator_choice(choice):
-            self.emu_var.set(choice)
-            if choice == "BlueStacks":
-                self.general_config["current_emulator"] = "BlueStacks"
-            elif choice == "LDPlayer":
-                self.general_config["current_emulator"] = "LDPlayer"
-            elif choice == "MEmu":
-                self.general_config["current_emulator"] = "MEmu"
-            else:
-                self.general_config["current_emulator"] = "Others"
-            save_dict_as_toml(self.general_config, self.general_config_path)
-            refresh_emu_buttons()
-
-        def create_emu_button(parent, text_display):
-            def on_click():
-                handle_emulator_choice(text_display)
-
-            btn = ctk.CTkButton(
-                parent,
-                text=text_display,
-                command=on_click,
-                corner_radius=S(6),
-                width=S(150),
-                height=S(40),
-                font=("Arial", S(16), "bold")
-            )
-            return btn
-
-        self.btn_ldplayer = create_emu_button(self.emulator_frame, "LDPlayer")
-        self.btn_bluestacks = create_emu_button(self.emulator_frame, "BlueStacks")
-        self.btn_memu = create_emu_button(self.emulator_frame, "MEmu")
-        self.btn_others = create_emu_button(self.emulator_frame, "Others")
-
-        self.btn_ldplayer.grid(row=0, column=0, padx=S(10), pady=S(5))
-        self.btn_bluestacks.grid(row=0, column=1, padx=S(10), pady=S(5))
-        self.btn_memu.grid(row=0, column=2, padx=S(10), pady=S(5))
-        self.btn_others.grid(row=0, column=3, padx=S(10), pady=S(5))
-
-        def refresh_emu_buttons():
-            curr_emu = self.emu_var.get()
-
-            def color(btn, val):
-                if val == curr_emu:
-                    btn.configure(fg_color="#AA2A2A", hover_color="#BB3A3A")
-                else:
-                    btn.configure(fg_color="#333333", hover_color="#BB3A3A")
-
-            color(self.btn_ldplayer, "LDPlayer")
-            color(self.btn_bluestacks, "BlueStacks")
-            color(self.btn_memu, "MEmu")
-            color(self.btn_others, "Others")
-
-        refresh_emu_buttons()
-
-        # -----------------------------------------------------------------
-        # Some spacing
-        # -----------------------------------------------------------------
-        row_ += 1
-
-        # -----------------------------------------------------------------
-        # 5) Start Button
-        # -----------------------------------------------------------------
-        start_button = ctk.CTkButton(
-            container,
-            text="Start",
-            fg_color="#c0392b",
-            hover_color="#e74c3c",
-            font=("Arial", S(24), "bold"),
-            command=self._on_start,
-            width=S(220),
-            height=S(60)
-        )
-        start_button.grid(row=row_, column=0, columnspan=2, padx=S(20), pady=S(30))
-        row_ += 1
-
-        # -----------------------------------------------------------------
-        # 6) "Pyla is free..." label at bottom, link in blue only
-        # -----------------------------------------------------------------
-        disclaim_frame = ctk.CTkFrame(container, fg_color="transparent")
-        disclaim_frame.grid(row=row_, column=0, columnspan=2, pady=S(10))
-
-        disclaim_label = ctk.CTkLabel(
-            disclaim_frame,
-            text="Pyla is free, public and open-source. Join the Discord -> ",
-            font=("Arial", S(18), "bold"),
-            text_color="#FFFFFF"
-        )
-        disclaim_label.pack(side="left")
-
-        discord_link = get_discord_link()
-
-        def open_discord_link():
-            webbrowser.open(discord_link)
-
-        link_label = ctk.CTkLabel(
-            disclaim_frame,
-            text=discord_link,
-            font=("Arial", S(18), "bold"),
-            text_color="#3498db",
-            cursor="hand2"
-        )
-        link_label.pack(side="left")
-        link_label.bind("<Button-1>", lambda e: open_discord_link())
-
-        row_ += 1
-
-        ad_frame = ctk.CTkFrame(container, fg_color="transparent")
-        ad_frame.grid(row=row_, column=0, columnspan=2, pady=S(10))
-
-        ad_label = ctk.CTkLabel(
-            ad_frame,
-            text="Support Pyla and get Early Access to updates by becoming a Patreon supporter -> ",
-            font=("Arial", S(18), "bold"),
-            text_color="#FFFFFF"
-        )
-        ad_label.pack(side="left")
-
-        shown_patreon_link = "www.patreon.com/c/pyla"
-        patreon_link = "https://www.patreon.com/pyla/membership"
-        def open_patreon_link():
-            webbrowser.open(patreon_link)
-        patreon_label = ctk.CTkLabel(
-            ad_frame,
-            text=shown_patreon_link,
-            font=("Arial", S(18), "bold"),
-            text_color="#3498db",
-            cursor="hand2"
-        )
-        patreon_label.pack(side="left")
-        patreon_label.bind("<Button-1>", lambda e: open_patreon_link())
-
-        container.grid_columnconfigure(0, weight=1)
-        container.grid_columnconfigure(1, weight=1)
-
-    # ---------------------------------------------------------------------------------------------
-    #  Additional Settings Tab
-    # ---------------------------------------------------------------------------------------------
-    def _init_additional_tab(self):
-        frame = self.tab_additional
-        container = ctk.CTkFrame(frame, fg_color="transparent")
-        container.pack(expand=True, fill="both")
-
-        # Extra space to avoid tooltip clipping
-        container.grid_rowconfigure(0, minsize=S(10))
-
-        row_idx = 0
-
-        # -----------------------------------------------------------------------------------------
-        # Helper to create labeled entries in either bot_config or general_config
-        # -----------------------------------------------------------------------------------------
-        def create_labeled_entry(label_text,
-                                 config_key,
-                                 convert_func,
-                                 use_general_config=False,
-                                 tooltip_text=None):
-            nonlocal row_idx
-            lbl = ctk.CTkLabel(container, text=label_text, font=("Arial", S(18)))
-            lbl.grid(row=row_idx, column=0, sticky="e", padx=S(20), pady=S(10))
-
-            # Decide which dictionary to read/write
-            if use_general_config:
-                current_config = self.general_config
-                current_path = self.general_config_path
-            else:
-                current_config = self.bot_config
-                current_path = self.bot_config_path
-            var_str = tk.StringVar(value=str(current_config[config_key]))
-
-            def on_save(*_):
-                val_str = var_str.get().strip()
-                if val_str == "":
-                    var_str.set(str(current_config[config_key]))
-                    return
-                try:
-                    val = convert_func(val_str)
-                    current_config[config_key] = val
-                    save_dict_as_toml(current_config, current_path)
-                except ValueError:
-                    var_str.set(str(current_config[config_key]))
-
-            entry = ctk.CTkEntry(
-                container, textvariable=var_str, width=S(120), font=("Arial", S(16))
-            )
-            entry.grid(row=row_idx, column=1, sticky="w", padx=S(20), pady=S(10))
-            entry.bind("<FocusOut>", on_save)
-            entry.bind("<Return>", on_save)
-
-            if tooltip_text:
-                self.attach_tooltip(entry, tooltip_text)
-
-            row_idx += 1
-
-
-        # 6) Minimum Movement Delay (bot_config)
-        create_labeled_entry(
-            label_text="Minimum Movement Delay:",
-            config_key="minimum_movement_delay",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text="How long (in seconds) the bot must maintain a movement before changing it."
-        )
-
-        # 9) Wall Detection Confidence (bot_config)
-        create_labeled_entry(
-            label_text="Wall Detection Confidence:",
-            config_key="wall_detection_confidence",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text="On a scale between 0 and 1, how sure must the bot be to detect a wall  (lower means it can detect more things but increases false detections and mistakes)."
-        )
-
-        # 9) Wall Detection Confidence (bot_config)
-        create_labeled_entry(
-            label_text="Player/Enemy Detection Confidence:",
-            config_key="entity_detection_confidence",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text="On a scale between 0 and 1, how sure must the bot be to detect the player/enemies/allies. (lower means it can detect more things but increases false detections and mistakes)."
-        )
-
-        # 7) Unstuck Movement Delay (bot_config)
-        create_labeled_entry(
-            label_text="Unstuck Movement Delay:",
-            config_key="unstuck_movement_delay",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text="How long (in seconds) can the bot maintain a movement before trying to unstuck itself."
-        )
-
-        # 8) Unstucking Duration (bot_config)
-        create_labeled_entry(
-            label_text="Unstucking Duration:",
-            config_key="unstuck_movement_hold_time",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text="For how long (in seconds) will the bot try to go in a different position to unstuck itself before going back to normal."
-        )
-
-        # 4) CPU/GPU (store in general_config)
-        lbl_gpu = ctk.CTkLabel(container, text="Use GPU (CPU/Auto):", font=("Arial", S(18)))
-        lbl_gpu.grid(row=row_idx, column=0, sticky="e", padx=S(20), pady=S(10))
-
-        gpu_values = ["cpu", "auto"]
-        gpu_var = tk.StringVar(value=self.general_config["cpu_or_gpu"])
-
-        def on_gpu_change(choice):
-            self.general_config["cpu_or_gpu"] = choice
-            save_dict_as_toml(self.general_config, self.general_config_path)
-
-        gpu_menu = ctk.CTkOptionMenu(
-            container,
-            values=gpu_values,
-            command=on_gpu_change,
-            variable=gpu_var,
-            font=("Arial", S(16)),
-            fg_color="#AA2A2A",
-            button_color="#AA2A2A",
-            button_hover_color="#BB3A3A",
-            width=S(100),
-            height=S(35)
-        )
-        gpu_menu.grid(row=row_idx, column=1, padx=S(20), pady=S(10), sticky="w")
-        row_idx += 1
-
-        lbl_long_press = ctk.CTkLabel(container, text="Longpress star_drop:", font=("Arial", S(18)))
-        lbl_long_press.grid(row=row_idx, column=0, sticky="e", padx=S(20), pady=S(10))
-        long_press_var = tk.BooleanVar(
-            value=(str(self.general_config["long_press_star_drop"]).lower() in ["yes", "true"])
-        )
-
-        def toggle_long_press_detection():
-            self.general_config["long_press_star_drop"] = "yes" if long_press_var.get() else "no"
-            save_dict_as_toml(self.general_config, self.general_config_path)
-
-        long_press_cb = ctk.CTkCheckBox(
-            container,
-            text="",
-            variable=long_press_var,
-            command=toggle_long_press_detection,
-            fg_color="#AA2A2A",
-            hover_color="#BB3A3A",
-            width=S(30),
-            height=S(30)
-        )
-        long_press_cb.grid(row=row_idx, column=1, sticky="w", padx=S(20), pady=S(10))
-        row_idx += 1
-
-
-        create_labeled_entry(
-            label_text="Super Detection Pixel Treshold:",
-            config_key="super_pixels_minimum",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text='Amount of "yellow" pixels the bot must detect to consider the super is ready.'
-        )
-
-        create_labeled_entry(
-            label_text="Trophies Multiplier:",
-            config_key="trophies_multiplier",
-            convert_func=int,
-            use_general_config=True,
-            tooltip_text="Enter the multiplier for trophies gained per match (for example : 2 for brawl arena)."
-        )
-
-        # 10) Gadget Detection Pixel Threshold (bot_config)
-        create_labeled_entry(
-            label_text="Gadget Detection Pixel Treshold:",
-            config_key="gadget_pixels_minimum",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text='Amount of "green" pixels the bot must detect to consider a gadget is ready.'
-        )
-
-        # 11) Hypercharge Detection Pixel Threshold (bot_config)
-        create_labeled_entry(
-            label_text="Hypercharge Detection Pixel Treshold:",
-            config_key="hypercharge_pixels_minimum",
-            convert_func=float,
-            use_general_config=False,
-            tooltip_text='Amount of "purple" pixels the bot must detect to consider a hypercharge is ready.'
-        )
-
-        # 1) Max IPS (store in general_config)
-        create_labeled_entry(
-            label_text="Max IPS:",
-            config_key="max_ips",
-            convert_func=lambda s: s if s.lower() == "auto" else int(s),
-            use_general_config=True,
-            tooltip_text="Maximum Images per second the bot processes. 'auto' means no limit."
-        )
-
-        container.grid_columnconfigure(0, weight=1)
-        container.grid_columnconfigure(1, weight=1)
-
-    # ---------------------------------------------------------------------------------------------
-    #  Timers Tab
-    # ---------------------------------------------------------------------------------------------
-    def _init_timers_tab(self):
-        frame = self.tab_timers
-        container = ctk.CTkFrame(frame, fg_color="transparent")
-        container.pack(expand=True, fill="both")
-
-        container.grid_rowconfigure(0, minsize=S(70))  # extra top space for tooltips
-
-        row_idx = 1
-
-        def create_timer_setting(param_name, label_text, tooltip_text=None, disabled=False):
-            nonlocal row_idx
-
-            lbl = ctk.CTkLabel(container, text=label_text, font=("Arial", S(18)))
-            lbl.grid(row=row_idx, column=0, padx=S(20), pady=S(10), sticky="e")
-
-            # Frame to hold slider & entry side by side
-            slider_entry_frame = ctk.CTkFrame(container, fg_color="transparent")
-            slider_entry_frame.grid(row=row_idx, column=1, padx=S(20), pady=S(10), sticky="w")
-
-            val_var = tk.StringVar(value=str(self.time_tresholds[param_name]))
-
-            # The slider
-            sld = ctk.CTkSlider(
-                slider_entry_frame,
-                from_=0.1,
-                to=10,
-                number_of_steps=99,
-                width=S(200),
-                command=lambda v: on_slider_change(v, val_var, param_name),
-                state=("disabled" if disabled else "normal")
-            )
-            sld.pack(side="left", padx=S(5))
-
-            # The text entry
-            entry = ctk.CTkEntry(
-                slider_entry_frame,
-                textvariable=val_var,
-                width=S(80),
-                font=("Arial", S(16)),
-                state=("disabled" if disabled else "normal")
-            )
-            entry.pack(side="left", padx=S(10))
-
-            def on_save(_):
-                if disabled:
-                    return
-                new_val_str = val_var.get().strip()
-                if new_val_str == "":
-                    val_var.set(str(self.time_tresholds[param_name]))
-                    return
-                try:
-                    val = float(new_val_str)
-                    self.time_tresholds[param_name] = val
-                    save_dict_as_toml(self.time_tresholds, self.time_tresholds_path)
-                    # Update slider visually
-                    if val < 0.1:
-                        sld.set(0.1)
-                    elif val > 10:
-                        sld.set(10)
-                    else:
-                        sld.set(val)
-                except ValueError:
-                    val_var.set(str(self.time_tresholds[param_name]))
-
-            entry.bind("<FocusOut>", on_save)
-            entry.bind("<Return>", on_save)
-
-            def on_slider_change(value, v_var, p_name):
-                if disabled:
-                    return
-                v = float(value)
-                # update entry text
-                v_var.set(f"{v:.2f}")
-                self.time_tresholds[p_name] = v
-                save_dict_as_toml(self.time_tresholds, self.time_tresholds_path)
-
-            # Initialize slider
-            try:
-                init_val = float(self.time_tresholds[param_name])
-                if init_val < 0.1:
-                    init_val = 0.1
-                elif init_val > 10:
-                    init_val = 10
-                sld.set(init_val)
-            except:
-                sld.set(1.0)
-
-            # NOTE: We removed "self.attach_tooltip(lbl, tooltip_text)" so the label has no tooltip.
-            if tooltip_text and not disabled:
-                self.attach_tooltip(sld, tooltip_text)
-                self.attach_tooltip(entry, tooltip_text)
-
-            row_idx += 1
-
-        create_timer_setting(
-            param_name="super",
-            label_text="Super Delay:",
-            tooltip_text="How often (in seconds) the bot checks if super is ready."
-        )
-        create_timer_setting(
-            param_name="hypercharge",
-            label_text="Hypercharge Delay:",
-            tooltip_text="How often (in seconds) the bot checks if hypercharge is ready."
-        )
-        create_timer_setting(
-            param_name="gadget",
-            label_text="Gadget Check Delay:",
-            tooltip_text="How often (in seconds) the bot checks if gadget is ready."
-        )
-        create_timer_setting(
-            param_name="wall_detection",
-            label_text="Wall Detection:",
-            tooltip_text="How often (in seconds) the bot detects the walls around it."
-        )
-        create_timer_setting(
-            param_name="no_detection_proceed",
-            label_text="No detections proceed Delay:",
-            tooltip_text="How often (in seconds) does the bot press Q to proceed when it doesn't find the player but doesn't know in what state it is."
-        )
-
-        container.grid_columnconfigure(0, weight=1)
-        container.grid_columnconfigure(1, weight=1)
-
-    # ---------------------------------------------------------------------------------------------
-    #  Match History Tab
-    # ---------------------------------------------------------------------------------------------
-    def _init_history_tab(self):
-        frame = self.tab_history
-
-        scroll_frame = ctk.CTkScrollableFrame(
-            frame, width=S(900), height=S(600), fg_color="transparent", corner_radius=S(10)
-        )
-        scroll_frame.pack(fill="both", expand=True, padx=S(10), pady=S(10))
-
-        max_cols = 4
-        row_idx = 0
-        col_idx = 0
-
-        icon_size = S(100)  # bigger icons
-        for brawler, stats in self.match_history.items():
-            if brawler == "total":
-                continue
-            icon_path = f"./api/assets/brawler_icons/{brawler}.png"
-            if not os.path.exists(icon_path):
-                icon_img = None
-            else:
-                pil_img = Image.open(icon_path).resize((icon_size, icon_size))
-                icon_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=(icon_size, icon_size))
-
-            total_games = stats["victory"] + stats["defeat"]
-            if total_games == 0:
-                wr = lr = dr = 0
-            else:
-                wr = round(100 * stats["victory"] / total_games, 1)
-                lr = round(100 * stats["defeat"] / total_games, 1)
-
-            cell_frame = ctk.CTkFrame(
-                scroll_frame,
-                width=S(200),
-                height=S(220),
-                corner_radius=S(8)
-            )
-            cell_frame.grid(row=row_idx, column=col_idx, padx=S(15), pady=S(15))
-
-            # Icon
-            if icon_img:
-                icon_label = ctk.CTkLabel(cell_frame, image=icon_img, text="")
-                icon_label.pack(pady=S(5))
-
-            # Brawler name & total games
-            text_label = ctk.CTkLabel(
-                cell_frame,
-                text=f"{brawler}\n{total_games} games",
-                font=("Arial", S(16), "bold")
-            )
-            text_label.pack()
-
-            stats_frame = ctk.CTkFrame(cell_frame, fg_color="transparent")
-            stats_frame.pack(pady=S(5))
-
-            # Win in green
-            color_win = "#2ecc71"
-
-            # Loss in red
-            color_loss = "#e74c3c"
-
-            lbl_win = ctk.CTkLabel(
-                stats_frame,
-                text=f"{wr}%",
-                font=("Arial", S(14), "bold"),
-                text_color=color_win
-            )
-            lbl_win.pack(side="left", padx=S(5))
-
-            lbl_loss = ctk.CTkLabel(
-                stats_frame,
-                text=f"{lr}%",
-                font=("Arial", S(14), "bold"),
-                text_color=color_loss
-            )
-            lbl_loss.pack(side="left", padx=S(5))
-
-            col_idx += 1
-            if col_idx >= max_cols:
-                col_idx = 0
-                row_idx += 1
-
-    # ---------------------------------------------------------------------------------------------
-    #  On Start => close window + callback
-    # ---------------------------------------------------------------------------------------------
     def _on_start(self):
         sys.stdout.flush()
         o_out, o_err = sys.stdout, sys.stderr
@@ -1027,4 +725,3 @@ class Hub:
 
         if callable(self.on_close_callback):
             self.on_close_callback()
-

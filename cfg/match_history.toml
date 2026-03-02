@@ -1,0 +1,9 @@
+[bull]
+defeat = 23
+victory = 33
+draw = 0
+
+[total]
+defeat = 0
+victory = 1
+draw = 0

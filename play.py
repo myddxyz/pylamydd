@@ -348,31 +348,44 @@ class Play(Movement):
         return movement
 
     def check_if_hypercharge_ready(self, frame):
-        screenshot = frame.crop((hypercharge_crop_area[0] * self.window_controller.width_ratio, hypercharge_crop_area[1] * self.window_controller.height_ratio, hypercharge_crop_area[2] * self.window_controller.width_ratio, hypercharge_crop_area[3] * self.window_controller.height_ratio))
-        purple_pixels = count_hsv_pixels(screenshot, (137, 158, 159), (179, 255, 255))
+        # Numpy array crop: frame[y1:y2, x1:x2] (BGR)
+        x1 = int(hypercharge_crop_area[0] * self.window_controller.width_ratio)
+        y1 = int(hypercharge_crop_area[1] * self.window_controller.height_ratio)
+        x2 = int(hypercharge_crop_area[2] * self.window_controller.width_ratio)
+        y2 = int(hypercharge_crop_area[3] * self.window_controller.height_ratio)
+        crop = frame[y1:y2, x1:x2]
+        purple_pixels = count_hsv_pixels(crop, (137, 158, 159), (179, 255, 255))
         if debug:
             print("hypercharge purple pixels:", purple_pixels, "(if > ", self.hypercharge_pixels_minimum, " then hypercharge is ready)")
-            screenshot.save(f"debug_frames/hypercharge_debug_{int(time.time())}.png")
+            cv2.imwrite(f"debug_frames/hypercharge_debug_{int(time.time())}.png", crop)
         if purple_pixels > self.hypercharge_pixels_minimum:
             return True
         return False
 
     def check_if_gadget_ready(self, frame):
-        screenshot = frame.crop((gadget_crop_area[0] * self.window_controller.width_ratio, gadget_crop_area[1] * self.window_controller.height_ratio, gadget_crop_area[2] * self.window_controller.width_ratio, gadget_crop_area[3] * self.window_controller.height_ratio))
-        green_pixels = count_hsv_pixels(screenshot, (57, 219, 165), (62, 255, 255))
+        x1 = int(gadget_crop_area[0] * self.window_controller.width_ratio)
+        y1 = int(gadget_crop_area[1] * self.window_controller.height_ratio)
+        x2 = int(gadget_crop_area[2] * self.window_controller.width_ratio)
+        y2 = int(gadget_crop_area[3] * self.window_controller.height_ratio)
+        crop = frame[y1:y2, x1:x2]
+        green_pixels = count_hsv_pixels(crop, (57, 219, 165), (62, 255, 255))
         if debug:
             print("gadget green pixels:", green_pixels, "(if > ", self.gadget_pixels_minimum, " then gadget is ready)")
-            screenshot.save(f"debug_frames/gadget_debug_{int(time.time())}.png")
+            cv2.imwrite(f"debug_frames/gadget_debug_{int(time.time())}.png", crop)
         if green_pixels > self.gadget_pixels_minimum:
             return True
         return False
 
     def check_if_super_ready(self, frame):
-        screenshot = frame.crop((super_crop_area[0] * self.window_controller.width_ratio, super_crop_area[1] * self.window_controller.height_ratio, super_crop_area[2] * self.window_controller.width_ratio, super_crop_area[3] * self.window_controller.height_ratio))
-        yellow_pixels = count_hsv_pixels(screenshot, (19, 190, 232), (24, 240, 255))
+        x1 = int(super_crop_area[0] * self.window_controller.width_ratio)
+        y1 = int(super_crop_area[1] * self.window_controller.height_ratio)
+        x2 = int(super_crop_area[2] * self.window_controller.width_ratio)
+        y2 = int(super_crop_area[3] * self.window_controller.height_ratio)
+        crop = frame[y1:y2, x1:x2]
+        yellow_pixels = count_hsv_pixels(crop, (19, 190, 232), (24, 240, 255))
         if debug:
             print("super yellow pixels:", yellow_pixels, "(if > ", self.super_pixels_minimum, " then super is ready)")
-            screenshot.save(f"debug_frames/super_debug_{int(time.time())}.png")
+            cv2.imwrite(f"debug_frames/super_debug_{int(time.time())}.png", crop)
         if yellow_pixels > self.super_pixels_minimum:
             return True
         return False

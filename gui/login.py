@@ -1,12 +1,11 @@
 import os
 import sys
 
-import customtkinter as ctk  # Import the customtkinter library
+import customtkinter as ctk  
 from gui.api import check_if_exists
 from utils import api_base_url
 sys.path.append(os.path.abspath('../'))
 from utils import update_toml_file, load_toml_as_dict
-
 
 def login(logged_in_setter):
 
@@ -36,20 +35,33 @@ def login(logged_in_setter):
             return
 
     app = ctk.CTk()
-    app.title('API Key Login')
-    app.geometry('500x200')
+    app.title('PYLAMYDD — Authentication')
+    app.geometry('500x220')
     ctk.set_appearance_mode("dark")
+    app.configure(fg_color="#0B0B0B")
 
-    label = ctk.CTkLabel(app, text="Enter API Key:", font=("Comic sans MS", 20))
-    label.pack(pady=(20, 5))
+    header = ctk.CTkFrame(app, fg_color="#1A1A1A", height=40, corner_radius=0)
+    header.pack(fill="x")
+    header.pack_propagate(False)
+    ctk.CTkLabel(header, text="AUTHENTICATION", font=("Arial", 13, "bold"), text_color="#C80000").pack(side="left", padx=15)
 
-    api_key_entry = ctk.CTkEntry(app, placeholder_text="API Key", font=("Comic sans MS", 20), width=400)
-    api_key_entry.pack(pady=(20, 10))
+    label = ctk.CTkLabel(app, text="Enter API Key:", font=("Arial", 18, "bold"), text_color="#FFFFFF")
+    label.pack(pady=(15, 5))
 
-    login_button = ctk.CTkButton(app, text="Login", command=on_login_button_click, font=("Comic sans MS", 25))
+    api_key_entry = ctk.CTkEntry(
+        app, placeholder_text="API Key", font=("Arial", 16), width=400,
+        fg_color="#1A1A1A", border_color="#C80000", text_color="#FFFFFF"
+    )
+    api_key_entry.pack(pady=(10, 10))
+
+    login_button = ctk.CTkButton(
+        app, text="LOGIN", command=on_login_button_click,
+        font=("Arial", 18, "bold"), fg_color="#C80000", hover_color="#FF1A1A",
+        corner_radius=6, height=40
+    )
     login_button.pack()
 
-    result_label = ctk.CTkLabel(app, text="")
-    result_label.pack(pady=(10, 0))
+    result_label = ctk.CTkLabel(app, text="", font=("Arial", 13))
+    result_label.pack(pady=(8, 0))
 
     app.mainloop()
