@@ -34,7 +34,9 @@ class SelectBrawler:
 
         square_size = int(75 * scale_factor)
         amount_of_rows = ceil(len(brawlers) / 10) + 1
-        necessary_height = (int(145 * scale_factor) + amount_of_rows * square_size + (amount_of_rows - 1) * int(3 * scale_factor))
+        calculated_height = (int(145 * scale_factor) + amount_of_rows * square_size + (amount_of_rows - 1) * int(3 * scale_factor))
+        necessary_height = min(calculated_height, int(750 * scale_factor))
+        
         self.app.title("PYLAMYDD — Select Brawler")
         self.brawlers = brawlers
 
@@ -84,8 +86,9 @@ class SelectBrawler:
         self.filter_entry.place(x=int(340 * scale_factor), y=int(scale_factor * 52))
         self.filter_var.trace_add("write", lambda *args: self.update_images(self.filter_var.get()))
 
-        self.image_frame = ctk.CTkFrame(self.app, fg_color=self.colors['ui box gray'])
-        self.image_frame.place(x=0, y=int(100 * scale_factor))
+        scroll_height = necessary_height - int(190 * scale_factor)
+        self.image_frame = ctk.CTkScrollableFrame(self.app, fg_color=self.colors['ui box gray'], width=int(810 * scale_factor), height=scroll_height)
+        self.image_frame.place(x=int(10 * scale_factor), y=int(100 * scale_factor))
 
         self.update_images("")
 
