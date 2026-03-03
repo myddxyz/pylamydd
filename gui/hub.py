@@ -2,7 +2,6 @@ import sys
 import customtkinter as ctk
 import webbrowser
 import os
-import time
 import pyautogui
 from PIL import Image
 import tkinter as tk
@@ -18,7 +17,6 @@ scale_factor = min(width_ratio, height_ratio)
 scale_factor *= 96/get_dpi_scale()
 
 def S(value):
-    """Helper to scale integer sizes based on the user's screen."""
     return int(value * scale_factor)
 
 BG          = "#0D0D0D"
@@ -31,18 +29,16 @@ ACCENT      = "#C80000"
 ACCENT_HVR  = "#E61A1A"
 BTN_OFF     = "#2A2A2A"
 BTN_HVR     = "#3A3A3A"
-TEXT_PRI     = "#FFFFFF"
-TEXT_SEC     = "#888888"
-TEXT_DIM     = "#555555"
+TEXT_PRI    = "#FFFFFF"
+TEXT_SEC    = "#888888"
+TEXT_DIM    = "#555555"
 DIVIDER     = "#2A2A2A"
-SECTION_HDR  = "#C80000"
+SECTION_HDR = "#C80000"
 GREEN       = "#2ecc71"
 GOLD        = "#FFD700"
 
+
 class Hub:
-    """
-    Pyla Control Center – sidebar-based UI.
-    """
 
     def __init__(self, version_str, latest_version_str,
                  correct_zoom=True, on_close_callback=None):
@@ -92,6 +88,7 @@ class Hub:
         self._tooltip_after_id = None
         self._tooltip_owner = None
         self._tooltip_text = ""
+        self._player_tag_after_id = None
 
         self.app = ctk.CTk()
         self.app.title("PYLAMYDD CONTROL CENTER")
@@ -233,9 +230,7 @@ class Hub:
         return frame
 
     def _toggle_btn(self, parent, values, current, callback):
-        """Create a row of toggle buttons."""
         frame = ctk.CTkFrame(parent, fg_color="transparent")
-
         btns = []
         for val, label, disabled in values:
             btn = ctk.CTkButton(
@@ -424,7 +419,7 @@ class Hub:
         sub_pages["general"] = general
 
         self._section_header(general, "ACCOUNT")
-        self._setting_row(general, "Player Tag (#...)", "player_tag", str, "Your Brawl Stars player tag. Used to automatically fetch current brawler trophies.", True)
+        self._setting_row_player_tag(general)
 
         self._section_header(general, "DETECTION")
         self._setting_row(general, "Minimum Movement Delay", "minimum_movement_delay",
@@ -499,9 +494,46 @@ class Hub:
         self.general_config[key] = value
         save_dict_as_toml(self.general_config, self.general_config_path)
 
+    def _setting_row_player_tag(self, parent):
+        row = ctk.CTkFrame(parent, fg_color="transparent")
+        row.pack(fill="x", padx=S(25), pady=S(4))
+
+        ctk.CTkLabel(row, text="Player Tag (#...)", font=("Arial", S(12)),
+                     text_color=TEXT_PRI).pack(side="left")
+
+        raw = self.general_config.get("player_tag", "")
+        var = tk.StringVar(value=str(raw) if raw is not None else "")
+
+        def _schedule_save(*_):
+            if self._player_tag_after_id is not None:
+                try:
+                    self.app.after_cancel(self._player_tag_after_id)
+                except Exception:
+                    pass
+            self._player_tag_after_id = self.app.after(600, _do_save)
+
+        def _do_save():
+            self._player_tag_after_id = None
+            v = var.get().strip()
+            self.general_config["player_tag"] = v
+            save_dict_as_toml(self.general_config, self.general_config_path)
+
+        var.trace_add("write", _schedule_save)
+
+        entry = ctk.CTkEntry(row, textvariable=var, width=S(140),
+                             font=("Arial", S(12)), fg_color=CARD_BG,
+                             border_color=DIVIDER)
+        entry.pack(side="right", padx=S(5))
+        entry.bind("<FocusOut>", lambda _: _do_save())
+        entry.bind("<Return>", lambda _: _do_save())
+
+        self.attach_tooltip(
+            entry,
+            "Your Brawl Stars player tag. Used to automatically fetch current brawler trophies."
+        )
+
     def _setting_row(self, parent, label, config_key, convert_func, tooltip,
                      use_general=False):
-        """A single setting row: label + entry."""
         row = ctk.CTkFrame(parent, fg_color="transparent")
         row.pack(fill="x", padx=S(25), pady=S(4))
 
@@ -511,16 +543,17 @@ class Hub:
         ctk.CTkLabel(row, text=label, font=("Arial", S(12)),
                      text_color=TEXT_PRI).pack(side="left")
 
-        var = tk.StringVar(value=str(cfg[config_key]))
+        raw = cfg.get(config_key, "")
+        var = tk.StringVar(value=str(raw) if raw is not None else "")
 
         def save(*_):
             v = var.get().strip()
             try:
                 cfg[config_key] = convert_func(v)
                 save_dict_as_toml(cfg, path)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
-        
+
         var.trace_add("write", save)
 
         entry = ctk.CTkEntry(row, textvariable=var, width=S(90),
@@ -534,14 +567,13 @@ class Hub:
             self.attach_tooltip(entry, tooltip)
 
     def _timer_row(self, parent, param, label, tooltip):
-        """Timer row with slider + entry."""
         row = ctk.CTkFrame(parent, fg_color="transparent")
         row.pack(fill="x", padx=S(25), pady=S(6))
 
         ctk.CTkLabel(row, text=label, font=("Arial", S(12)),
                      text_color=TEXT_PRI).pack(side="left")
 
-        val_var = tk.StringVar(value=str(self.time_tresholds[param]))
+        val_var = tk.StringVar(value=str(self.time_tresholds.get(param, 1.0)))
 
         entry = ctk.CTkEntry(row, textvariable=val_var, width=S(60),
                              font=("Arial", S(11)), fg_color=CARD_BG,
@@ -556,19 +588,19 @@ class Hub:
         sld.pack(side="right", padx=S(5))
 
         try:
-            init = float(self.time_tresholds[param])
+            init = float(self.time_tresholds.get(param, 1.0))
             sld.set(max(0.1, min(10, init)))
-        except:
+        except Exception:
             sld.set(1.0)
 
-        def on_entry_save(_):
+        def on_entry_save(_=None):
             try:
                 val = float(val_var.get().strip())
                 self.time_tresholds[param] = val
                 save_dict_as_toml(self.time_tresholds, self.time_tresholds_path)
                 sld.set(max(0.1, min(10, val)))
             except ValueError:
-                val_var.set(str(self.time_tresholds[param]))
+                val_var.set(str(self.time_tresholds.get(param, 1.0)))
 
         entry.bind("<FocusOut>", on_entry_save)
         entry.bind("<Return>", on_entry_save)
@@ -584,7 +616,6 @@ class Hub:
         save_dict_as_toml(self.time_tresholds, self.time_tresholds_path)
 
     def _build_history_content(self, parent):
-        """Build match history grid."""
         max_cols = 4
         row_idx = 0
         col_idx = 0
