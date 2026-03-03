@@ -125,8 +125,9 @@ class SelectBrawler:
             response = urllib.request.urlopen(req, timeout=5)
             data = json.loads(response.read().decode('utf-8'))
             if 'brawlers' in data:
+                import re
                 for b in data['brawlers']:
-                    name = b['name'].lower().replace(' ', '_').replace('.', '')
+                    name = re.sub(r'[^a-z0-9]', '', b['name'].lower())
                     self.trophies_dict[name] = b['trophies']
         except Exception:
             pass
