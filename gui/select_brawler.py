@@ -132,8 +132,27 @@ class SelectBrawler:
             if not tag.startswith('#'):
                 tag = '#' + tag
             tag_encoded = urllib.parse.quote(tag)
-            url = f"https://api.brawlapi.com/v1/players/{tag_encoded}"
-            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            
+            # Official API URL
+            url = f"https://api.brawlstars.com/v1/players/{tag_encoded}"
+            
+            # Load token from config
+            config = load_toml_as_dict("cfg/general_config.toml")
+            api_token = config.get("brawl_stars_api_token", "").strip()
+            
+            if not api_token:
+                if debug:
+                    print("Brawl Stars API Token missing from general_config.toml. Cannot fetch player trophies.")
+                return
+
+            req = urllib.request.Request(
+                url, 
+                headers={
+                    'User-Agent': 'Mozilla/5.0',
+                    'Authorization': f'Bearer {api_token}',
+                    'Accept': 'application/json'
+                }
+            )
             response = urllib.request.urlopen(req, timeout=8)
             data = json.loads(response.read().decode('utf-8'))
             result = {}
@@ -142,8 +161,9 @@ class SelectBrawler:
                     key = _normalize_brawler_name(b['name'])
                     result[key] = b['trophies']
             self.app.after(0, self._on_player_data_ready, result)
-        except Exception:
-            pass
+        except Exception as e:
+            if debug:
+                print(f"Brawl Stars API fetch failed: {e}")
 
     def _on_player_data_ready(self, result: dict):
         self.trophies_dict = result
