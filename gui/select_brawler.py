@@ -328,8 +328,10 @@ class SelectBrawler:
             self.trophies_button.configure(fg_color=self.colors['cherry red'])
 
     def update_images(self, filter_text):
-        for widget in self.image_frame.winfo_children():
-            widget.destroy()
+        if hasattr(self, 'current_brawler_widgets'):
+            for widget in self.current_brawler_widgets:
+                widget.destroy()
+        self.current_brawler_widgets = []
 
         row_num = 0
         col_num = 0
@@ -347,9 +349,10 @@ class SelectBrawler:
                 )
                 label.bind("<Button-1>", lambda e, b=brawler: self.on_image_click(b))
                 label.grid(row=row_num, column=col_num, padx=int(5 * scale_factor), pady=int(3 * scale_factor))
+                self.current_brawler_widgets.append(label)
 
                 col_num += 1
-                if col_num == 10:
+                if col_num == 8:
                     col_num = 0
                     row_num += 1
 
