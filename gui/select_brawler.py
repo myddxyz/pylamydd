@@ -33,14 +33,14 @@ class SelectBrawler:
         self.app = ctk.CTk()
 
         square_size = int(75 * scale_factor)
-        amount_of_rows = ceil(len(brawlers) / 10) + 1
+        amount_of_rows = ceil(len(brawlers) / 8) + 1
         calculated_height = (int(145 * scale_factor) + amount_of_rows * square_size + (amount_of_rows - 1) * int(3 * scale_factor))
         necessary_height = min(calculated_height, int(750 * scale_factor))
         
         self.app.title("PYLAMYDD — Select Brawler")
         self.brawlers = brawlers
 
-        self.app.geometry(f"{str(int(860 * scale_factor))}x{necessary_height}+{str(int(600 * scale_factor))}")
+        self.app.geometry(f"{str(int(710 * scale_factor))}x{necessary_height}+{str(int(600 * scale_factor))}")
         self.data_setter = data_setter
         self.colors = {
             'gray': "#7d7777",
@@ -82,12 +82,12 @@ class SelectBrawler:
             fg_color=self.colors['ui box gray'], border_color=self.colors['cherry red'], text_color="white"
         )
         ctk.CTkLabel(self.app, text="Write brawler", font=("Arial", int(20 * scale_factor)),
-                     text_color=self.colors['cherry red']).place(x=int(scale_factor * 373), y=int(scale_factor * 20))
-        self.filter_entry.place(x=int(340 * scale_factor), y=int(scale_factor * 52))
+                     text_color=self.colors['cherry red']).place(x=int(scale_factor * 298), y=int(scale_factor * 20))
+        self.filter_entry.place(x=int(265 * scale_factor), y=int(scale_factor * 52))
         self.filter_var.trace_add("write", lambda *args: self.update_images(self.filter_var.get()))
 
         scroll_height = necessary_height - int(190 * scale_factor)
-        self.image_frame = ctk.CTkScrollableFrame(self.app, fg_color=self.colors['ui box gray'], width=int(810 * scale_factor), height=scroll_height)
+        self.image_frame = ctk.CTkScrollableFrame(self.app, fg_color=self.colors['ui box gray'], width=int(690 * scale_factor), height=scroll_height)
         self.image_frame.place(x=int(10 * scale_factor), y=int(100 * scale_factor))
 
         self.update_images("")
@@ -95,7 +95,7 @@ class SelectBrawler:
         ctk.CTkButton(self.app, text="Start", command=self.start_bot, fg_color=self.colors['ui box gray'],
                       text_color="white",
                       font=("Arial", int(25 * scale_factor)), border_color=self.colors['cherry red'],
-                      border_width=int(2 * scale_factor)).place(x=int(390 * scale_factor), y=int((necessary_height - 60 * scale_factor)))
+                      border_width=int(2 * scale_factor)).place(x=int(315 * scale_factor), y=int((necessary_height - 60 * scale_factor)))
 
         ctk.CTkButton(self.app, text="Load Brawler Config", command=self.load_brawler_config,
                       fg_color=self.colors['ui box gray'],
@@ -111,12 +111,12 @@ class SelectBrawler:
             fg_color=self.colors['ui box gray'], border_color=self.colors['cherry red'], text_color="white"
         )
         ctk.CTkLabel(self.app, text="Run for :", font=("Arial", int(22 * scale_factor)),
-                     text_color="white").place(x=int(scale_factor * 580), y=int((necessary_height - 55 * scale_factor)))
-        self.timer_entry.place(x=int(scale_factor * 675), y=int((necessary_height - 55 * scale_factor)))
+                     text_color="white").place(x=int(scale_factor * 430), y=int((necessary_height - 55 * scale_factor)))
+        self.timer_entry.place(x=int(scale_factor * 525), y=int((necessary_height - 55 * scale_factor)))
         self.timer_var.set(load_toml_as_dict("cfg/general_config.toml")["run_for_minutes"])
         self.timer_var.trace_add("write", lambda *args: self.update_timer(self.timer_var.get()))
         ctk.CTkLabel(self.app, text="minutes", font=("Arial", int(22 * scale_factor)),
-                     text_color="white").place(x=int(scale_factor * 760), y=int((necessary_height - 55 * scale_factor)))
+                     text_color="white").place(x=int(scale_factor * 610), y=int((necessary_height - 55 * scale_factor)))
 
         self.app.mainloop()
 
