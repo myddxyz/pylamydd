@@ -84,6 +84,7 @@ class Hub:
         self.general_config.setdefault("long_press_star_drop", "no")
         self.general_config.setdefault("trophies_multiplier", 1.0)
         self.general_config.setdefault("current_emulator", "LDPlayer")
+        self.general_config.setdefault("player_tag", "")
 
         ctk.set_appearance_mode("dark")
 
@@ -421,6 +422,9 @@ class Hub:
 
         general = ctk.CTkScrollableFrame(settings_content, fg_color="transparent")
         sub_pages["general"] = general
+
+        self._section_header(general, "ACCOUNT")
+        self._setting_row(general, "Player Tag (#...)", "player_tag", str, "Your Brawl Stars player tag. Used to automatically fetch current brawler trophies.", True)
 
         self._section_header(general, "DETECTION")
         self._setting_row(general, "Minimum Movement Delay", "minimum_movement_delay",

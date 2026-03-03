@@ -45,6 +45,10 @@ class SelectBrawler:
 
         self.app.configure(fg_color=self.colors['ui box gray'])
 
+        self.player_tag = load_toml_as_dict("cfg/general_config.toml").get('player_tag', "")
+        self.trophies_dict = {}
+        self._fetch_player_data()
+
         self.images = []
         self.brawlers_data = []
         self.farm_type = ""
@@ -105,6 +109,28 @@ class SelectBrawler:
     def set_farm_type(self, value):
         self.farm_type = value
 
+    def _fetch_player_data(self):
+        if not self.player_tag:
+            return
+        try:
+            import urllib.request
+            import urllib.parse
+            import json
+            tag = self.player_tag.strip()
+            if not tag.startswith('#'):
+                tag = '#' + tag
+            tag_encoded = urllib.parse.quote(tag)
+            url = f"https://api.brawlapi.com/v1/players/{tag_encoded}"
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            response = urllib.request.urlopen(req, timeout=5)
+            data = json.loads(response.read().decode('utf-8'))
+            if 'brawlers' in data:
+                for b in data['brawlers']:
+                    name = b['name'].lower().replace(' ', '_').replace('.', '')
+                    self.trophies_dict[name] = b['trophies']
+        except Exception:
+            pass
+
     def start_bot(self):
         self.data_setter(self.brawlers_data)
         self.app.destroy()
@@ -148,7 +174,8 @@ class SelectBrawler:
             border_color=self.colors['cherry red'], border_width=int(2 * scale_factor), height=int(28 * scale_factor)
         )
 
-        trophies_var = tk.StringVar()
+        default_trophies = self.trophies_dict.get(brawler, "")
+        trophies_var = tk.StringVar(value=str(default_trophies))
         trophies_entry = ctk.CTkEntry(
             top, textvariable=trophies_var, fg_color=self.colors['ui box gray'], text_color="white",
             border_color=self.colors['cherry red'], border_width=int(2 * scale_factor), height=int(28 * scale_factor)
@@ -269,7 +296,15 @@ class SelectBrawler:
 
         for brawler, img_tk in self.images:
             if brawler.startswith(filter_text.lower()):
-                label = ctk.CTkLabel(self.image_frame, image=img_tk, text="")
+                text = ""
+                if brawler in self.trophies_dict:
+                    text = f"🏆 {self.trophies_dict[brawler]}"
+                    
+                label = ctk.CTkLabel(
+                    self.image_frame, image=img_tk, text=text, 
+                    font=("Arial", int(12 * scale_factor), "bold"), 
+                    text_color="#FFD700", compound="top"
+                )
                 label.bind("<Button-1>", lambda e, b=brawler: self.on_image_click(b))  
                 label.grid(row=row_num, column=col_num, padx=int(5 * scale_factor), pady=int(3 * scale_factor))
 

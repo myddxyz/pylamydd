@@ -1,9 +1,9 @@
 [
     {
-        "brawler": "bull",
+        "brawler": "grom",
         "push_until": 10000,
         "trophies": 10,
-        "wins": 5,
+        "wins": 45,
         "type": "wins",
         "automatically_pick": false,
         "win_streak": 0

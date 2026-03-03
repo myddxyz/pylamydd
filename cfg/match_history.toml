@@ -1,9 +1,19 @@
 [bull]
-defeat = 25
-victory = 37
+defeat = 27
+victory = 40
 draw = 1
 
 [total]
-defeat = 2
-victory = 5
-draw = 1
+defeat = 20
+victory = 45
+draw = 0
+
+[byron]
+defeat = 201
+victory = 98
+draw = 3
+
+[grom]
+defeat = 20
+victory = 45
+draw = 0

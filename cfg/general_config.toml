@@ -6,6 +6,6 @@ max_ips = "auto"
 pyla_version = "0.5.8"
 long_press_star_drop = "yes"
 trophies_multiplier = 1
-run_for_minutes = 600
+run_for_minutes = 6000
 current_emulator = "BlueStacks"
 emulator_port = 5037
