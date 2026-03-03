@@ -9,3 +9,4 @@ trophies_multiplier = 1
 run_for_minutes = 6000
 current_emulator = "BlueStacks"
 emulator_port = 5037
+player_tag = "#123TEST"

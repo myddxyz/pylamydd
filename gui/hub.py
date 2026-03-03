@@ -515,14 +515,13 @@ class Hub:
 
         def save(*_):
             v = var.get().strip()
-            if v == "":
-                var.set(str(cfg[config_key]))
-                return
             try:
                 cfg[config_key] = convert_func(v)
                 save_dict_as_toml(cfg, path)
             except ValueError:
-                var.set(str(cfg[config_key]))
+                pass
+        
+        var.trace_add("write", save)
 
         entry = ctk.CTkEntry(row, textvariable=var, width=S(90),
                              font=("Arial", S(12)), fg_color=CARD_BG,

@@ -116,7 +116,7 @@ class SelectBrawler:
             import urllib.request
             import urllib.parse
             import json
-            tag = self.player_tag.strip()
+            tag = self.player_tag.strip().upper()
             if not tag.startswith('#'):
                 tag = '#' + tag
             tag_encoded = urllib.parse.quote(tag)
