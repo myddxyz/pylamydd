@@ -170,7 +170,10 @@ class StageManager:
         print("Pressed Q to start a match")
 
     def click_brawl_stars(self, frame):
-        screenshot = frame.crop((50, 4, 900, 31))
+        if isinstance(frame, np.ndarray):
+            screenshot = frame[4:31, 50:900]
+        else:
+            screenshot = frame.crop((50, 4, 900, 31))
         if self.brawl_stars_icon is None:
             self.brawl_stars_icon = load_image("state_finder/images_to_detect/brawl_stars_icon.png",
                                                self.window_controller.scale_factor)

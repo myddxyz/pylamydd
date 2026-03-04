@@ -180,7 +180,6 @@ class Detect:
         padded_img = np.full((self.input_size[0], self.input_size[1], 3), 128, dtype=np.uint8)
         padded_img[:new_h, :new_w, :] = resized_img
 
-        padded_img = cv2.cvtColor(padded_img, cv2.COLOR_BGR2RGB)
         padded_img = padded_img.astype(np.float32) / 255.0
         padded_img = np.transpose(padded_img, (2, 0, 1))
         padded_img = np.expand_dims(padded_img, axis=0)

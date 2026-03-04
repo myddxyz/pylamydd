@@ -1,9 +1,9 @@
 [
     {
-        "brawler": "grom",
+        "brawler": "larrylawrie",
         "push_until": 10000,
         "trophies": 10,
-        "wins": 45,
+        "wins": 73,
         "type": "wins",
         "automatically_pick": false,
         "win_streak": 0
