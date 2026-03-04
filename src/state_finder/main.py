@@ -6,6 +6,7 @@ import numpy as np
 from difflib import SequenceMatcher
 sys.path.append(os.path.abspath('../'))
 from utils import count_hsv_pixels, load_toml_as_dict
+from trophy_observer import TrophyObserver
 
 orig_screen_width, orig_screen_height = 1920, 1080
 
@@ -58,18 +59,7 @@ crop_region = load_toml_as_dict("./cfg/lobby_config.toml")['lobby']['trophy_obse
 
 
 def rework_game_result(res_string):
-    res_string = res_string.lower()
-    if res_string in ["victory", "defeat", "draw"]:
-        return res_string, 1.0
-
-    ratios = {
-        "victory": SequenceMatcher(None, res_string, 'victory').ratio(),
-        "defeat": SequenceMatcher(None, res_string, 'defeat').ratio(),
-        "draw": SequenceMatcher(None, res_string, "draw").ratio()
-    }
-    highest_ratio_string = max(ratios, key=ratios.get)
-
-    return highest_ratio_string, ratios[highest_ratio_string]
+    return TrophyObserver.rework_game_result(res_string)
 
 
 
@@ -141,7 +131,6 @@ def is_in_end_of_a_match(image):
 
 
 def is_in_trophy_reward(image):
-    image = np.array(image)
     starting_x = int(image.shape[1] * 0.75)
     starting_y = int(image.shape[0] * 0.75)
     image = image[starting_y:, starting_x:]

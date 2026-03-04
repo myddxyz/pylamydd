@@ -44,14 +44,20 @@ class TrophyObserver:
         return min(self.win_streak - 1, 5)  # Max gain from win streak is 5
 
     def calc_lost_decrement(self):
+        if self.current_trophies is None:
+            return 0
         for max_trophies, loss in self.trophy_lose_ranges:
             if float(self.current_trophies) <= float(max_trophies):
                 return loss
+        return 0
 
     def calc_win_increment(self):
+        if self.current_trophies is None:
+            return 0
         for max_trophies, gain in self.trophy_win_ranges:
             if float(self.current_trophies) <= float(max_trophies):
                 return gain*self.trophies_multiplier + self.win_streak_gain()
+        return 0
 
     def load_history(self, brawler_list):
         if os.path.exists(self.history_file):

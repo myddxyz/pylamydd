@@ -202,7 +202,7 @@ class Detect:
         return results
 
     def detect_objects(self, img, conf_tresh=0.6):
-        """Detect objects in BGR numpy array."""
+        """Detect objects in BGR numpy array (model trained on BGR)."""
         orig_h, orig_w = img.shape[:2]
         preprocessed_img, resized_w, resized_h = self.preprocess_image(img)
 
@@ -215,6 +215,8 @@ class Detect:
             for *xyxy, conf, cls in detection:
                 x1, y1, x2, y2 = map(int, xyxy)
                 class_id = int(cls)
+                if class_id >= len(self.classes):
+                    continue
                 class_name = self.classes[class_id]
 
                 if class_id in self.ignore_classes or class_name in self.ignore_classes:

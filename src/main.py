@@ -1,7 +1,5 @@
 import asyncio
 import time
-import cv2
-import onnxruntime as ort
 
 from gui.hub import Hub
 from gui.login import login
@@ -17,7 +15,7 @@ from utils import get_brawler_list, update_missing_brawlers_info, check_version,
     update_wall_model_classes, get_latest_wall_model_file, get_latest_version, cprint
 from window_controller import WindowController
 
-# ─── Startup ─────────────────────────────────────────────────────────
+import onnxruntime as ort
 providers = ort.get_available_providers()
 if "DmlExecutionProvider" in providers:
     print("[PylaMydd] DirectML GPU active")
@@ -143,7 +141,8 @@ def pyla_main(data):
 
 
                 brawler = self.Stage_manager.brawlers_pick_data[0]['brawler']
-                self.Play.main(frame_np, brawler)
+                if self.state == "match":
+                    self.Play.main(frame_np, brawler)
                 c += 1
 
                 if self.max_ips:

@@ -9,7 +9,6 @@ import win32gui
 import win32con
 import win32ui
 import pyautogui
-from PIL import Image
 from typing import List
 
 # New libraries
@@ -139,11 +138,10 @@ class WindowController:
         return frame, frame_time
 
     def screenshot(self, array=False):
+        """Return an RGB numpy array (legacy method, use screenshot_numpy() for performance)."""
         frame, _ = self._get_raw_frame()
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        if array:
-            return frame_rgb
-        return Image.fromarray(frame_rgb)
+        return frame_rgb
 
     def screenshot_numpy(self):
         """Return (BGR numpy frame, frame_time) — zero conversion overhead.

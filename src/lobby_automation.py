@@ -52,7 +52,8 @@ class LobbyAutomation:
         for i in range(50):
             screenshot = self.window_controller.screenshot_numpy()[0]
             h, w = screenshot.shape[:2]
-            screenshot = cv2.resize(screenshot, (int(w * 0.65), int(h * 0.65)))
+            ocr_scale = 0.65
+            screenshot = cv2.resize(screenshot, (int(w * ocr_scale), int(h * ocr_scale)))
             if debug: print("extracting text on current screen...")
             results = extract_text_and_positions(screenshot)
             reworked_results = {}
@@ -67,9 +68,9 @@ class LobbyAutomation:
                 print("All detected text while looking for brawler name:", reworked_results.keys())
                 print()
             if brawler in reworked_results.keys():
-                print("Found brawler ", brawler, "clicking on its icon at ", int(x * 1.5385), int(y * 1.5385))
+                print("Found brawler ", brawler, "clicking on its icon at ", int(x / ocr_scale), int(y / ocr_scale))
                 x, y = reworked_results[brawler]['center']
-                self.window_controller.click(int(x * 1.5385), int(y * 1.5385))
+                self.window_controller.click(int(x / ocr_scale), int(y / ocr_scale))
                 time.sleep(1)
                 select_x, select_y = self.coords_cfg['lobby']['select_btn'][0], self.coords_cfg['lobby']['select_btn'][1]
                 self.window_controller.click(select_x, select_y, already_include_ratio=False)

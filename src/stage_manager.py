@@ -6,7 +6,6 @@ import time
 
 import cv2
 import numpy as np
-import pyautogui
 import requests
 
 from state_finder.main import get_state
@@ -244,6 +243,9 @@ class StageManager:
             self.window_controller.click(*popup_location)
 
     def do_state(self, state, data=None):
+        if state not in self.states:
+            print(f"Unknown state: {state}, skipping")
+            return
         if data is not None:
             self.states[state](data)
             return
