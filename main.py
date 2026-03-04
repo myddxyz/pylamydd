@@ -59,8 +59,8 @@ def pyla_main(data):
             self.cooldown_duration = 3 * 60
 
         def initialize_stage_manager(self):
-            self.Stage_manager.Trophy_observer.win_streak = data[0]['win_streak']
-            self.Stage_manager.Trophy_observer.current_trophies = data[0]['trophies']
+            self.Stage_manager.Trophy_observer.win_streak = data[0]['win_streak'] or 0
+            self.Stage_manager.Trophy_observer.current_trophies = data[0]['trophies'] or 0
             self.Stage_manager.Trophy_observer.current_wins = data[0]['wins'] if data[0]['wins'] != "" else 0
 
         @staticmethod
@@ -132,9 +132,8 @@ def pyla_main(data):
                     s_time = time.time()
                     c = 0
 
-                frame_np = self.window_controller.screenshot_numpy()
+                frame_np, last_ft = self.window_controller.screenshot_numpy()
 
-                _, last_ft = self.window_controller.get_latest_frame()
                 if last_ft > 0 and (time.time() - last_ft) > self.window_controller.FRAME_STALE_TIMEOUT:
                     self.Play.window_controller.keys_up(list("wasd"))
                     print("Stale frame detected -- pausing actions until feed resumes")

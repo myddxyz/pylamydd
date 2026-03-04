@@ -348,7 +348,8 @@ class Play(Movement):
         return movement
 
     def check_if_hypercharge_ready(self, frame):
-        # Numpy array crop: frame[y1:y2, x1:x2] (BGR)
+        """Check hypercharge status via HSV pixel count. Expects BGR numpy frame."""
+        # Numpy array crop: frame[y1:y2, x1:x2] (BGR from screenshot_numpy)
         x1 = int(hypercharge_crop_area[0] * self.window_controller.width_ratio)
         y1 = int(hypercharge_crop_area[1] * self.window_controller.height_ratio)
         x2 = int(hypercharge_crop_area[2] * self.window_controller.width_ratio)
@@ -363,6 +364,7 @@ class Play(Movement):
         return False
 
     def check_if_gadget_ready(self, frame):
+        """Check gadget status via HSV pixel count. Expects BGR numpy frame."""
         x1 = int(gadget_crop_area[0] * self.window_controller.width_ratio)
         y1 = int(gadget_crop_area[1] * self.window_controller.height_ratio)
         x2 = int(gadget_crop_area[2] * self.window_controller.width_ratio)
@@ -377,6 +379,7 @@ class Play(Movement):
         return False
 
     def check_if_super_ready(self, frame):
+        """Check super status via HSV pixel count. Expects BGR numpy frame."""
         x1 = int(super_crop_area[0] * self.window_controller.width_ratio)
         y1 = int(super_crop_area[1] * self.window_controller.height_ratio)
         x2 = int(super_crop_area[2] * self.window_controller.width_ratio)

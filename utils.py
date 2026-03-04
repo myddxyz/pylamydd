@@ -41,7 +41,6 @@ def extract_text_and_positions(image_path):
 class DefaultEasyOCR:
     def __init__(self):
         self._reader = None
-        self._reader = None
 
     def _ensure_loaded(self):
         if self._reader is None:
@@ -64,7 +63,9 @@ api_base_url = "localhost"
 brawlers_info_file_path = "cfg/brawlers_info.json"
 
 def count_hsv_pixels(image_input, low_hsv, high_hsv):
-    """Count pixels in HSV range."""
+    """Count pixels in HSV range.
+    If image_input is a numpy array, it MUST be BGR (from screenshot_numpy).
+    If image_input is a PIL Image, it is assumed to be RGB and converted to BGR first."""
     if isinstance(image_input, np.ndarray):
         bgr_image = image_input  # Already BGR numpy
     else:
@@ -84,7 +85,15 @@ def save_brawler_data(data):
 
 
 def find_template_center(main_img, template, threshold=0.8):
-    main_image_cv = cv2.cvtColor(np.array(main_img), cv2.COLOR_RGB2GRAY)
+    if isinstance(main_img, np.ndarray):
+        # Numpy arrays from screenshot_numpy() are BGR
+        if len(main_img.shape) == 3:
+            main_image_cv = cv2.cvtColor(main_img, cv2.COLOR_BGR2GRAY)
+        else:
+            main_image_cv = main_img
+    else:
+        # PIL images are RGB
+        main_image_cv = cv2.cvtColor(np.array(main_img), cv2.COLOR_RGB2GRAY)
     template_arr = np.array(template)
     if len(template_arr.shape) == 3 and template_arr.shape[2] == 3:
         template_cv = cv2.cvtColor(template_arr, cv2.COLOR_BGR2GRAY)

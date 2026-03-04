@@ -43,7 +43,7 @@ class LobbyAutomation:
                 print("Brawler menu button not found, retrying...")
                 brawler_menu_treshold -= 0.1
                 time.sleep(1)
-            if not found and brawler_menu_treshold < 0.5:
+            if not found and brawler_menu_treshold <= 0.5:
                 image = self.window_controller.screenshot()
                 image.save(r'brawler_menu_btn_not_found.png')
                 raise ValueError("Brawler menu button not found on screen, even at low threshold.")

@@ -70,18 +70,6 @@ class StageManager:
         self.long_press_star_drop = load_toml_as_dict("./cfg/general_config.toml")["long_press_star_drop"]
         self.window_controller = window_controller
 
-    def start_brawl_stars(self, frame):
-        data = extract_text_and_positions(np.array(frame))
-        for key in list(data.keys()):
-            if key.replace(" ", "") in ["brawl", "brawlstars", "stars"]:
-                x, y = data[key]['center']
-                self.window_controller.click(x, y)
-                return
-
-        brawl_stars_icon_coords = self.lobby_config['lobby'].get('brawl_stars_icon', [960, 540])
-        x, y = brawl_stars_icon_coords[0]*self.window_controller.width_ratio, brawl_stars_icon_coords[1]*self.window_controller.height_ratio
-        self.window_controller.click(x, y)
-
     @staticmethod
     def validate_trophies(trophies_string):
         trophies_string = trophies_string.lower()
