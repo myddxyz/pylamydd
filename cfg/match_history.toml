@@ -4,8 +4,8 @@ victory = 40
 draw = 1
 
 [total]
-defeat = 51
-victory = 73
+defeat = 4
+victory = 4
 draw = 0
 
 [byron]
@@ -26,4 +26,9 @@ draw = 0
 [larrylawrie]
 defeat = 51
 victory = 73
+draw = 0
+
+[rt]
+defeat = 4
+victory = 4
 draw = 0

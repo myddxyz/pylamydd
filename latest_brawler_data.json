@@ -1,9 +1,9 @@
 [
     {
-        "brawler": "larrylawrie",
+        "brawler": "rt",
         "push_until": 10000,
-        "trophies": 10,
-        "wins": 73,
+        "trophies": 126,
+        "wins": 4,
         "type": "wins",
         "automatically_pick": false,
         "win_streak": 0
