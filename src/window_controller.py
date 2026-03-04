@@ -179,9 +179,13 @@ class WindowController:
         if not self.are_we_moving:
             self.touch_down(self.joystick_x, self.joystick_y, pointer_id=self.PID_JOYSTICK)
             self.are_we_moving = True
-            self.last_joystick_pos = (self.joystick_x + delta_x, self.joystick_y + delta_y)
+            # Immediately move joystick to target direction
+            target_x = self.joystick_x + delta_x
+            target_y = self.joystick_y + delta_y
+            self.touch_move(target_x, target_y, pointer_id=self.PID_JOYSTICK)
+            self.last_joystick_pos = (target_x, target_y)
 
-        if self.last_joystick_pos != (self.joystick_x + delta_x, self.joystick_y + delta_y):
+        elif self.last_joystick_pos != (self.joystick_x + delta_x, self.joystick_y + delta_y):
             self.touch_move(self.joystick_x + delta_x, self.joystick_y + delta_y, pointer_id=self.PID_JOYSTICK)
             self.last_joystick_pos = (self.joystick_x + delta_x, self.joystick_y + delta_y)
 

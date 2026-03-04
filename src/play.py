@@ -483,8 +483,8 @@ class Play(Movement):
         category = self.brawlers_info.get(brawler, {}).get("category", "fighter")
 
         if category == "tank":
-            # Tanks: rush in, get close, be aggressive, don't strafe much
-            return 1.0, 0.3, False
+            # Tanks: rush in, get close, be aggressive, light strafe
+            return 1.0, 0.3, True
         elif category == "assassin":
             # Assassins: rush in fast, attack at full range, strafe a lot
             return 0.9, 0.2, True
@@ -492,10 +492,10 @@ class Play(Movement):
             # Sharpshooters: keep max distance, only shoot at 70% range, strafe
             return 0.7, 1.5, True
         elif category == "thrower":
-            # Throwers: stay far, shoot at 80% range, don't need to strafe (behind walls)
-            return 0.8, 1.3, False
+            # Throwers: stay far, shoot at 80% range, light strafe
+            return 0.8, 1.3, True
         elif category == "support":
-            # Support: stay back, shoot conservatively at 75% range, light strafe
+            # Support: stay back, shoot conservatively at 75% range, strafe
             return 0.75, 1.2, True
         elif category == "controller":
             # Controllers: medium distance, zone enemies, strafe

@@ -48,6 +48,7 @@ pyinstaller --noconfirm --onedir --console --name PylaMydd --distpath dist\bin ^
     --collect-all easyocr ^
     --collect-all onnxruntime ^
     --collect-all scrcpy ^
+    --collect-all tkinter ^
     src\main.py
 
 echo.
