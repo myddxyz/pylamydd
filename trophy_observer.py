@@ -112,10 +112,7 @@ class TrophyObserver:
     def find_game_result(self, screenshot, current_brawler, game_result=None):
         if not game_result:
             x1, y1, x2, y2 = self.crop_region
-            if isinstance(screenshot, np.ndarray):
-                cropped = screenshot[y1:y2, x1:x2]
-            else:
-                cropped = np.array(screenshot.crop(self.crop_region))
+            cropped = screenshot[y1:y2, x1:x2]
             result = reader.readtext(cropped)
 
             if len(result) == 0:

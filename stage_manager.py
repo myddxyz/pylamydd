@@ -109,7 +109,7 @@ class StageManager:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 try:
-                    screenshot = self.window_controller.screenshot()
+                    screenshot = self.window_controller.screenshot_numpy()[0]
                     loop.run_until_complete(async_notify_user("bot_is_stuck", screenshot))
                 finally:
                     loop.close()
@@ -120,7 +120,7 @@ class StageManager:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             try:
-                screenshot = self.window_controller.screenshot()
+                screenshot = self.window_controller.screenshot_numpy()[0]
                 loop.run_until_complete(async_notify_user(self.brawlers_pick_data[0]["brawler"], screenshot))
             finally:
                 loop.close()
@@ -131,7 +131,7 @@ class StageManager:
             next_brawler_name = self.brawlers_pick_data[0]['brawler']
             if self.brawlers_pick_data[0]["automatically_pick"]:
                 print("Picking next automatically submitted brawler")
-                screenshot = self.window_controller.screenshot()
+                screenshot = self.window_controller.screenshot_numpy()[0]
                 current_state = get_state(screenshot)
                 if current_state != "lobby":
                     print("Trying to reach the lobby to switch brawler")
@@ -142,7 +142,7 @@ class StageManager:
                     self.window_controller.press_key("Q")
                     print("Pressed Q to return to lobby")
                     time.sleep(1)
-                    screenshot = self.window_controller.screenshot()
+                    screenshot = self.window_controller.screenshot_numpy()[0]
                     current_state = get_state(screenshot)
                     attempts += 1
                 if attempts >= max_attempts:
@@ -158,10 +158,8 @@ class StageManager:
         print("Pressed Q to start a match")
 
     def click_brawl_stars(self, frame):
-        if isinstance(frame, np.ndarray):
-            screenshot = frame[4:31, 50:900]
-        else:
-            screenshot = frame.crop((50, 4, 900, 31))
+        """frame is always BGR numpy array."""
+        screenshot = frame[4:31, 50:900]
         if self.brawl_stars_icon is None:
             self.brawl_stars_icon = load_image("state_finder/images_to_detect/brawl_stars_icon.png",
                                                self.window_controller.scale_factor)
@@ -176,7 +174,7 @@ class StageManager:
             self.window_controller.press_key("Q")
 
     def end_game(self):
-        screenshot = self.window_controller.screenshot()
+        screenshot = self.window_controller.screenshot_numpy()[0]
 
         found_game_result = False
         current_state = get_state(screenshot)
@@ -214,7 +212,7 @@ class StageManager:
                         loop = asyncio.new_event_loop()
                         asyncio.set_event_loop(loop)
                         try:
-                            screenshot = self.window_controller.screenshot()
+                            screenshot = self.window_controller.screenshot_numpy()[0]
                             loop.run_until_complete(async_notify_user("completed", screenshot))
                         finally:
                             loop.close()
@@ -227,7 +225,7 @@ class StageManager:
             self.window_controller.press_key("Q")
             print("Game has ended, pressing Q")
             time.sleep(3)
-            screenshot = self.window_controller.screenshot()
+            screenshot = self.window_controller.screenshot_numpy()[0]
             current_state = get_state(screenshot)
             end_attempts += 1
         if end_attempts >= max_end_attempts:
@@ -238,7 +236,7 @@ class StageManager:
         self.window_controller.click(100*self.window_controller.width_ratio, 60*self.window_controller.height_ratio)
 
     def close_pop_up(self):
-        screenshot = self.window_controller.screenshot()
+        screenshot = self.window_controller.screenshot_numpy()[0]
         if self.close_popup_icon is None:
             self.close_popup_icon = load_image("state_finder/images_to_detect/close_popup.png", self.window_controller.scale_factor)
         popup_location = find_template_center(screenshot, self.close_popup_icon)

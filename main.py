@@ -2,7 +2,6 @@ import asyncio
 import time
 import cv2
 import onnxruntime as ort
-from PIL import Image
 
 from gui.hub import Hub
 from gui.login import login
@@ -77,7 +76,7 @@ def pyla_main(data):
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             try:
-                screenshot = self.window_controller.screenshot()
+                screenshot = self.window_controller.screenshot_numpy()[0]
                 loop.run_until_complete(async_notify_user("bot_is_stuck", screenshot))
             finally:
                 loop.close()

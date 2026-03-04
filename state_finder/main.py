@@ -4,7 +4,6 @@ from utils import reader, extract_text_and_positions
 import cv2
 import numpy as np
 from difflib import SequenceMatcher
-from PIL import Image
 sys.path.append(os.path.abspath('../'))
 from utils import count_hsv_pixels, load_toml_as_dict
 
@@ -166,18 +165,10 @@ def is_in_star_drop(image):
     return False
 
 def get_state(screenshot):
-    """Accepts PIL image or BGR numpy array."""
-    if isinstance(screenshot, np.ndarray):
-        # Already numpy BGR — use directly
-        if super_debug:
-            cv2.imwrite(f"./debug_frames/state_screenshot_{len(os.listdir('./debug_frames'))}.png", screenshot)
-        screenshot_bgr = screenshot
-    else:
-        # PIL image path
-        if super_debug: screenshot.save(f"./debug_frames/state_screenshot_{len(os.listdir('./debug_frames'))}.png")
-        screenshot = np.array(screenshot)
-        screenshot_bgr = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
-    state = get_in_game_state(screenshot_bgr)
+    """Accepts BGR numpy array."""
+    if super_debug:
+        cv2.imwrite(f"./debug_frames/state_screenshot_{len(os.listdir('./debug_frames'))}.png", screenshot)
+    state = get_in_game_state(screenshot)
     print(f"State: {state}")
     return state
 

@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from PIL import Image
 import onnxruntime as ort
 from utils import load_toml_as_dict
 
@@ -167,9 +166,6 @@ class Detect:
             self.model.run(None, {self._input_name: dummy})
 
     def preprocess_image(self, img):
-        if isinstance(img, Image.Image):
-            img = np.array(img)
-
         h, w, _ = img.shape
         scale = min(self.input_size[0] / h, self.input_size[1] / w)
         new_w = int(w * scale)
@@ -206,10 +202,7 @@ class Detect:
         return results
 
     def detect_objects(self, img, conf_tresh=0.6):
-        if isinstance(img, Image.Image):
-            img = np.array(img)
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
+        """Detect objects in BGR numpy array."""
         orig_h, orig_w = img.shape[:2]
         preprocessed_img, resized_w, resized_h = self.preprocess_image(img)
 

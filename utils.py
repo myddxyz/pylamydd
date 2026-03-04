@@ -63,14 +63,8 @@ api_base_url = "localhost"
 brawlers_info_file_path = "cfg/brawlers_info.json"
 
 def count_hsv_pixels(image_input, low_hsv, high_hsv):
-    """Count pixels in HSV range.
-    If image_input is a numpy array, it MUST be BGR (from screenshot_numpy).
-    If image_input is a PIL Image, it is assumed to be RGB and converted to BGR first."""
-    if isinstance(image_input, np.ndarray):
-        bgr_image = image_input  # Already BGR numpy
-    else:
-        bgr_image = cv2.cvtColor(np.array(image_input), cv2.COLOR_RGB2BGR)
-    hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
+    """Count pixels in HSV range. Expects BGR numpy array."""
+    hsv_image = cv2.cvtColor(image_input, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv_image, np.array(low_hsv), np.array(high_hsv))
     pixel_count = np.count_nonzero(mask)
     return pixel_count
@@ -85,15 +79,11 @@ def save_brawler_data(data):
 
 
 def find_template_center(main_img, template, threshold=0.8):
-    if isinstance(main_img, np.ndarray):
-        # Numpy arrays from screenshot_numpy() are BGR
-        if len(main_img.shape) == 3:
-            main_image_cv = cv2.cvtColor(main_img, cv2.COLOR_BGR2GRAY)
-        else:
-            main_image_cv = main_img
+    """Find template center in image. Expects BGR numpy array."""
+    if len(main_img.shape) == 3:
+        main_image_cv = cv2.cvtColor(main_img, cv2.COLOR_BGR2GRAY)
     else:
-        # PIL images are RGB
-        main_image_cv = cv2.cvtColor(np.array(main_img), cv2.COLOR_RGB2GRAY)
+        main_image_cv = main_img
     template_arr = np.array(template)
     if len(template_arr.shape) == 3 and template_arr.shape[2] == 3:
         template_cv = cv2.cvtColor(template_arr, cv2.COLOR_BGR2GRAY)
@@ -270,7 +260,8 @@ def check_version():
             print("Error, couldn't get the version, please check your internet connection or go ask for help in the discord.")
 
 
-async def async_notify_user(message_type: str | None = None, screenshot: Image = None) -> None:
+async def async_notify_user(message_type: str | None = None, screenshot: np.ndarray = None) -> None:
+    """Send notification to Discord. screenshot must be BGR numpy array."""
     user_id = load_toml_as_dict("cfg/general_config.toml")["discord_id"]
     webhook_url = load_toml_as_dict("cfg/general_config.toml")["personal_webhook"]
     if not webhook_url:
@@ -287,9 +278,8 @@ async def async_notify_user(message_type: str | None = None, screenshot: Image =
         status_line = f"Pyla completed brawler goal for {message_type}!"
         ping = f"<@{user_id}>"
 
-    buffer = io.BytesIO()
-    screenshot.save(buffer, format="PNG")
-    buffer.seek(0)
+    _, png_data = cv2.imencode('.png', screenshot)
+    buffer = io.BytesIO(png_data.tobytes())
     file = discord.File(buffer, filename="screenshot.png")
 
     # Build the embed that holds both the text and the screenshot
