@@ -1,7 +1,11 @@
 import cv2
 import numpy as np
 import onnxruntime as ort
+import torch
 from utils import load_toml_as_dict
+
+# Limit CPU thread usage to avoid hogging all cores
+torch.set_num_threads(2)
 
 
 def numpy_nms(boxes, scores, iou_threshold=0.6):
@@ -154,7 +158,8 @@ class Detect:
         so = ort.SessionOptions()
         so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         so.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
-        so.intra_op_num_threads = 0
+        so.intra_op_num_threads = 2
+        so.inter_op_num_threads = 2
 
         model = ort.InferenceSession(self.model_path, sess_options=so, providers=[onnx_provider])
         return model, onnx_provider
