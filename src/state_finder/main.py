@@ -3,7 +3,6 @@ import sys
 from utils import reader, extract_text_and_positions
 import cv2
 import numpy as np
-from difflib import SequenceMatcher
 sys.path.append(os.path.abspath('../'))
 from utils import count_hsv_pixels, load_toml_as_dict
 from trophy_observer import TrophyObserver

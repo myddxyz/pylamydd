@@ -333,17 +333,12 @@ class Play(Movement):
     def do_movement(self, movement):
         movement = movement.lower()
         keys_to_keyDown = []
-        keys_to_keyUp = []
         for key in ['w', 'a', 's', 'd']:
             if key in movement:
                 keys_to_keyDown.append(key)
-            else:
-                keys_to_keyUp.append(key)
 
         if keys_to_keyDown:
             self.window_controller.keys_down(keys_to_keyDown)
-
-        self.window_controller.keys_up(keys_to_keyUp)
 
         self.keys_hold = keys_to_keyDown
 
@@ -591,7 +586,7 @@ class Play(Movement):
         )
 
         if enemy_distance <= attack_range:
-            if self.should_use_gadget == True and self.is_gadget_ready:
+            if self.should_use_gadget and self.is_gadget_ready:
                 self.use_gadget()
                 self.time_since_gadget_checked = time.time()
                 self.is_gadget_ready = False
