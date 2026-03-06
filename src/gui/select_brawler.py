@@ -76,47 +76,76 @@ class SelectBrawler:
             self.images.append((brawler, img_tk))
 
         self.filter_var = tk.StringVar()
+        # Top search bar redesign
+        self.filter_var = tk.StringVar()
+        
+        search_frame = ctk.CTkFrame(self.app, fg_color="transparent")
+        search_frame.place(relx=0.5, y=int(scale_factor * 40), anchor="center")
+        
+        ctk.CTkLabel(search_frame, text="🔍", font=("Inter", int(18 * scale_factor)), text_color=self.colors['gray']).pack(side="left", padx=(0, 5))
+        
         self.filter_entry = ctk.CTkEntry(
-            self.app, textvariable=self.filter_var,
-            placeholder_text="Type brawler name...", font=("", int(20 * scale_factor)), width=int(200 * scale_factor),
-            fg_color=self.colors['ui box gray'], border_color=self.colors['cherry red'], text_color="white"
+            search_frame, textvariable=self.filter_var, placeholder_text="Search Brawler...", 
+            font=("Inter", int(16 * scale_factor)), width=int(300 * scale_factor), height=int(40 * scale_factor),
+            fg_color=self.colors['dark gray'], border_color=self.colors['cherry red'], text_color="white", corner_radius=8
         )
-        ctk.CTkLabel(self.app, text="Write brawler", font=("Inter", int(20 * scale_factor)),
-                     text_color=self.colors['cherry red']).place(x=int(scale_factor * 298), y=int(scale_factor * 20))
-        self.filter_entry.place(x=int(265 * scale_factor), y=int(scale_factor * 52))
+        self.filter_entry.pack(side="left")
         self.filter_var.trace_add("write", lambda *args: self.update_images(self.filter_var.get()))
 
         scroll_height = necessary_height - int(190 * scale_factor)
-        self.image_frame = ctk.CTkScrollableFrame(self.app, fg_color=self.colors['ui box gray'], width=int(690 * scale_factor), height=scroll_height)
-        self.image_frame.place(x=int(10 * scale_factor), y=int(100 * scale_factor))
+        self.image_frame = ctk.CTkScrollableFrame(
+            self.app, fg_color=self.colors['ui box gray'], width=int(670 * scale_factor), height=scroll_height,
+            corner_radius=10, border_width=1, border_color=self.colors['dark gray']
+        )
+        self.image_frame.place(relx=0.5, y=int(100 * scale_factor), anchor="n")
 
         self.update_images("")
 
-        ctk.CTkButton(self.app, text="Start", command=self.start_bot, fg_color=self.colors['ui box gray'],
-                      text_color="white",
-                      font=("Inter", int(25 * scale_factor)), border_color=self.colors['cherry red'],
-                      border_width=int(2 * scale_factor)).place(x=int(315 * scale_factor), y=int((necessary_height - 60 * scale_factor)))
+        # Build a structured footer for the buttons and timer
+        footer_frame = ctk.CTkFrame(self.app, fg_color="transparent", height=int(80 * scale_factor))
+        footer_frame.place(x=0, y=int((necessary_height - 80 * scale_factor)), relwidth=1.0)
+        footer_frame.pack_propagate(False)
 
-        ctk.CTkButton(self.app, text="Load Brawler Config", command=self.load_brawler_config,
-                      fg_color=self.colors['ui box gray'],
-                      text_color="white",
-                      font=("Inter", int(25 * scale_factor)), border_color=self.colors['cherry red'],
-                      border_width=int(2 * scale_factor)).place(x=int(10 * scale_factor),
-                                                                y=int((necessary_height - 60 * scale_factor)))
+        # Left side: Load Config
+        load_btn = ctk.CTkButton(
+            footer_frame, text="Load Config", command=self.load_brawler_config,
+            fg_color=self.colors['dark gray'], hover_color=self.colors['ui box gray'], text_color="white",
+            font=("Inter", int(16 * scale_factor), "bold"), border_color=self.colors['gray'],
+            border_width=int(1 * scale_factor), corner_radius=8, width=int(140 * scale_factor), height=int(40 * scale_factor)
+        )
+        load_btn.pack(side="left", padx=int(15 * scale_factor), pady=int(20 * scale_factor))
+
+        # Center: Start Button (Big & Prominent)
+        start_btn = ctk.CTkButton(
+            footer_frame, text="▶ START BOT", command=self.start_bot,
+            fg_color=self.colors['cherry red'], hover_color=self.colors['indian red'], text_color="white",
+            font=("Inter", int(18 * scale_factor), "bold"), corner_radius=8,
+            width=int(180 * scale_factor), height=int(45 * scale_factor)
+        )
+        start_btn.pack(side="left", padx=int(30 * scale_factor), pady=int(17 * scale_factor))
+
+        # Right side: Timer
+        timer_frame = ctk.CTkFrame(footer_frame, fg_color="transparent")
+        timer_frame.pack(side="right", padx=int(15 * scale_factor), pady=int(20 * scale_factor))
+
+        ctk.CTkLabel(
+            timer_frame, text="Run for :", font=("Inter", int(15 * scale_factor), "bold"), text_color=self.colors['chess white']
+        ).pack(side="left", padx=int(5 * scale_factor))
 
         self.timer_var = tk.StringVar()
+        self.timer_var.set(str(load_toml_as_dict("cfg/general_config.toml").get("run_for_minutes", 60)))
+        
         self.timer_entry = ctk.CTkEntry(
-            self.app, textvariable=self.timer_var,
-            placeholder_text="Enter an amount of minutes", font=("", int(20 * scale_factor)), width=int(80 * scale_factor),
-            fg_color=self.colors['ui box gray'], border_color=self.colors['cherry red'], text_color="white"
+            timer_frame, textvariable=self.timer_var, font=("Inter", int(15 * scale_factor), "bold"),
+            width=int(60 * scale_factor), height=int(35 * scale_factor),
+            fg_color=self.colors['dark gray'], border_color=self.colors['cherry red'], text_color="white", corner_radius=6
         )
-        ctk.CTkLabel(self.app, text="Run for :", font=("Inter", int(22 * scale_factor)),
-                     text_color="white").place(x=int(scale_factor * 430), y=int((necessary_height - 55 * scale_factor)))
-        self.timer_entry.place(x=int(scale_factor * 525), y=int((necessary_height - 55 * scale_factor)))
-        self.timer_var.set(load_toml_as_dict("cfg/general_config.toml")["run_for_minutes"])
+        self.timer_entry.pack(side="left", padx=int(5 * scale_factor))
         self.timer_var.trace_add("write", lambda *args: self.update_timer(self.timer_var.get()))
-        ctk.CTkLabel(self.app, text="minutes", font=("Inter", int(22 * scale_factor)),
-                     text_color="white").place(x=int(scale_factor * 610), y=int((necessary_height - 55 * scale_factor)))
+
+        ctk.CTkLabel(
+            timer_frame, text="min", font=("Inter", int(15 * scale_factor)), text_color=self.colors['gray']
+        ).pack(side="left")
 
         self.app.mainloop()
 
@@ -204,35 +233,30 @@ class SelectBrawler:
         top = ctk.CTkToplevel(self.app)
         top.configure(fg_color=self.colors['ui box gray'])
         top.geometry(
-            f"{str(int(300 * scale_factor))}x{str(int(450 * scale_factor))}+{str(int(1100 * scale_factor))}+{str(int(200 * scale_factor))}")
-        top.title("Enter Brawler Data")
+            f"{str(int(300 * scale_factor))}x{str(int(460 * scale_factor))}+{str(int(1100 * scale_factor))}+{str(int(200 * scale_factor))}")
+        top.title("Configure Brawler")
         top.attributes("-topmost", True)
 
+        def make_entry(var):
+            return ctk.CTkEntry(
+                top, textvariable=var, fg_color=self.colors['dark gray'], text_color="white",
+                border_color=self.colors['cherry red'], border_width=int(1 * scale_factor), 
+                height=int(32 * scale_factor), corner_radius=6
+            )
+
         push_until_var = tk.StringVar()
-        push_until_entry = ctk.CTkEntry(
-            top, textvariable=push_until_var, fg_color=self.colors['ui box gray'], text_color="white",
-            border_color=self.colors['cherry red'], border_width=int(2 * scale_factor), height=int(28 * scale_factor)
-        )
+        push_until_entry = make_entry(push_until_var)
 
         normalized = _normalize_brawler_name(brawler)
         default_trophies = self.trophies_dict.get(normalized, "")
         trophies_var = tk.StringVar(value=str(default_trophies) if default_trophies != "" else "")
-        trophies_entry = ctk.CTkEntry(
-            top, textvariable=trophies_var, fg_color=self.colors['ui box gray'], text_color="white",
-            border_color=self.colors['cherry red'], border_width=int(2 * scale_factor), height=int(28 * scale_factor)
-        )
+        trophies_entry = make_entry(trophies_var)
 
         wins_var = tk.StringVar()
-        wins_entry = ctk.CTkEntry(
-            top, textvariable=wins_var, fg_color=self.colors['ui box gray'], text_color="white",
-            border_color=self.colors['cherry red'], border_width=int(2 * scale_factor), height=int(28 * scale_factor)
-        )
+        wins_entry = make_entry(wins_var)
 
         current_win_streak_var = tk.StringVar(value="0")
-        current_win_streak_entry = ctk.CTkEntry(
-            top, textvariable=current_win_streak_var, fg_color=self.colors['ui box gray'], text_color="white",
-            border_color=self.colors['cherry red'], border_width=int(2 * scale_factor), height=int(28 * scale_factor)
-        )
+        current_win_streak_entry = make_entry(current_win_streak_var)
 
         auto_pick_var = tk.BooleanVar(value=True)
         auto_pick_checkbox = ctk.CTkCheckBox(
