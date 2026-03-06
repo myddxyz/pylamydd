@@ -19,23 +19,24 @@ scale_factor *= 96/get_dpi_scale()
 def S(value):
     return int(value * scale_factor)
 
-BG          = "#0D0D0D"
-SIDEBAR_BG  = "#111111"
-PANEL_BG    = "#161616"
-CARD_BG     = "#1E1E1E"
-HEADER_BG   = "#131313"
-FOOTER_BG   = "#131313"
-ACCENT      = "#C80000"
-ACCENT_HVR  = "#E61A1A"
-BTN_OFF     = "#2A2A2A"
-BTN_HVR     = "#3A3A3A"
-TEXT_PRI    = "#FFFFFF"
-TEXT_SEC    = "#888888"
-TEXT_DIM    = "#555555"
-DIVIDER     = "#2A2A2A"
-SECTION_HDR = "#C80000"
-GREEN       = "#2ecc71"
-GOLD        = "#FFD700"
+BG          = "#09090B"
+SIDEBAR_BG  = "#0E0E11"
+PANEL_BG    = "#09090B"
+CARD_BG     = "#16161A"
+HEADER_BG   = "#0E0E11"
+FOOTER_BG   = "#0E0E11"
+ACCENT      = "#E62937"
+ACCENT_HVR  = "#FF3A4A"
+BTN_OFF     = "#1E1E24"
+BTN_HVR     = "#2A2A35"
+TEXT_PRI    = "#F8F9FA"
+TEXT_SEC    = "#A1A1AA"
+TEXT_DIM    = "#52525B"
+DIVIDER     = "#27272A"
+SECTION_HDR = "#E62937"
+GREEN       = "#10B981"
+GOLD        = "#F59E0B"
+FONT_FAMILY = "Inter"
 
 
 class Hub:
@@ -121,29 +122,29 @@ class Hub:
 
         logo_frame = ctk.CTkFrame(header, fg_color="transparent")
         logo_frame.pack(side="left", padx=S(12))
-        ctk.CTkLabel(logo_frame, text="PYLAMYDD", font=("Arial", S(16), "bold"),
+        ctk.CTkLabel(logo_frame, text="PYLAMYDD", font=(FONT_FAMILY, S(16), "bold"),
                      text_color=TEXT_PRI).pack(side="top")
         ctk.CTkFrame(logo_frame, fg_color=ACCENT, height=S(3),
                      width=S(60), corner_radius=0).pack(side="top")
 
         ctk.CTkLabel(header, text="CONTROL CENTER",
-                     font=("Arial", S(12)), text_color=TEXT_SEC
+                     font=(FONT_FAMILY, S(12)), text_color=TEXT_SEC
                      ).pack(side="left", padx=S(10))
 
         badge = ctk.CTkFrame(header, fg_color="#1E1E1E", corner_radius=S(12),
                              border_width=1, border_color="#333333")
         badge.pack(side="right", padx=S(15))
-        ctk.CTkLabel(badge, text="  ● IDLE  ", font=("Arial", S(10)),
+        ctk.CTkLabel(badge, text="  ● IDLE  ", font=(FONT_FAMILY, S(10)),
                      text_color=TEXT_SEC).pack(padx=S(4), pady=S(2))
 
     def _build_footer(self):
         footer = ctk.CTkFrame(self.app, fg_color=FOOTER_BG, height=S(28), corner_radius=0)
         footer.pack(fill="x", side="bottom")
         footer.pack_propagate(False)
-        ctk.CTkLabel(footer, text="●  DISCONNECTED", font=("Arial", S(9)),
+        ctk.CTkLabel(footer, text="●  DISCONNECTED", font=(FONT_FAMILY, S(9)),
                      text_color=GOLD).pack(side="left", padx=S(12))
         ctk.CTkLabel(footer, text=f"STABLE {self.version_str}",
-                     font=("Arial", S(9)), text_color=TEXT_DIM
+                     font=(FONT_FAMILY, S(9)), text_color=TEXT_DIM
                      ).pack(side="right", padx=S(12))
 
     def _build_sidebar(self):
@@ -171,7 +172,7 @@ class Hub:
             btn = ctk.CTkButton(
                 frame, text=icon, width=S(42), height=S(42),
                 fg_color="transparent", hover_color=BTN_HVR,
-                font=("Arial", S(18)),
+                font=(FONT_FAMILY, S(18)),
                 command=lambda pk=panel_key, idx=i: self._on_sidebar_click(pk, idx),
                 corner_radius=S(6)
             )
@@ -187,14 +188,14 @@ class Hub:
         discord_btn = ctk.CTkButton(
             self.sidebar, text="💬", width=S(42), height=S(42),
             fg_color="transparent", hover_color=BTN_HVR,
-            font=("Arial", S(18)),
+            font=(FONT_FAMILY, S(18)),
             command=lambda: webbrowser.open(discord_link),
             corner_radius=S(6)
         )
         discord_btn.pack(side="bottom", pady=S(10))
 
         ctk.CTkLabel(self.sidebar, text=f"v{self.version_str}",
-                     font=("Arial", S(8)), text_color=TEXT_DIM
+                     font=(FONT_FAMILY, S(8)), text_color=TEXT_DIM
                      ).pack(side="bottom", pady=S(2))
 
     def _on_sidebar_click(self, panel_key, idx):
@@ -223,7 +224,7 @@ class Hub:
     def _section_header(self, parent, text):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", padx=S(25), pady=(S(18), S(6)))
-        ctk.CTkLabel(frame, text=text.upper(), font=("Arial", S(11), "bold"),
+        ctk.CTkLabel(frame, text=text.upper(), font=(FONT_FAMILY, S(11), "bold"),
                      text_color=SECTION_HDR).pack(side="left")
         ctk.CTkFrame(frame, fg_color=DIVIDER, height=1).pack(
             side="left", fill="x", expand=True, padx=S(10))
@@ -235,7 +236,7 @@ class Hub:
         for val, label, disabled in values:
             btn = ctk.CTkButton(
                 frame, text=label, width=S(140), height=S(38),
-                font=("Arial", S(13), "bold"), corner_radius=S(6),
+                font=(FONT_FAMILY, S(13), "bold"), corner_radius=S(6),
                 fg_color=ACCENT if val == current else BTN_OFF,
                 hover_color=ACCENT_HVR if val == current else BTN_HVR,
                 text_color=TEXT_PRI if not disabled else TEXT_DIM,
@@ -268,7 +269,7 @@ class Hub:
         if w_list:
             for w in w_list:
                 ctk.CTkLabel(panel, text=w, text_color="#e74c3c",
-                             font=("Arial", S(13), "bold")).pack(pady=S(3))
+                             font=(FONT_FAMILY, S(13), "bold")).pack(pady=S(3))
 
         self._section_header(panel, "MAP ORIENTATION")
 
@@ -350,7 +351,7 @@ class Hub:
         start_btn = ctk.CTkButton(
             panel, text="▶  START", width=S(260), height=S(52),
             fg_color=ACCENT, hover_color=ACCENT_HVR,
-            font=("Arial", S(18), "bold"), corner_radius=S(8),
+            font=(FONT_FAMILY, S(18), "bold"), corner_radius=S(8),
             command=self._on_start
         )
         start_btn.pack(pady=S(25))
@@ -358,9 +359,9 @@ class Hub:
         foot = ctk.CTkFrame(panel, fg_color="transparent")
         foot.pack(pady=S(5))
         ctk.CTkLabel(foot, text="Pyla is free and public.  ›  ",
-                     font=("Arial", S(11)), text_color=TEXT_DIM).pack(side="left")
+                     font=(FONT_FAMILY, S(11)), text_color=TEXT_DIM).pack(side="left")
         discord_link = get_discord_link()
-        link = ctk.CTkLabel(foot, text="Join Community", font=("Arial", S(11)),
+        link = ctk.CTkLabel(foot, text="Join Community", font=(FONT_FAMILY, S(11)),
                             text_color="#5865F2", cursor="hand2")
         link.pack(side="left")
         link.bind("<Button-1>", lambda e: webbrowser.open(discord_link))
@@ -383,7 +384,7 @@ class Hub:
         settings_sidebar.pack_propagate(False)
 
         ctk.CTkLabel(settings_sidebar, text="SETTINGS",
-                     font=("Arial", S(11), "bold"), text_color=SECTION_HDR
+                     font=(FONT_FAMILY, S(11), "bold"), text_color=SECTION_HDR
                      ).pack(anchor="w", padx=S(15), pady=(S(15), S(8)))
 
         sub_pages = {}
@@ -405,7 +406,7 @@ class Hub:
             btn = ctk.CTkButton(
                 settings_sidebar, text=f"  {label}", anchor="w",
                 fg_color="transparent", hover_color=BTN_HVR,
-                text_color=TEXT_PRI, font=("Arial", S(12)),
+                text_color=TEXT_PRI, font=(FONT_FAMILY, S(12)),
                 width=S(140), height=S(32), corner_radius=S(4),
                 command=lambda k=key, idx=i: show_sub(k, idx)
             )
@@ -442,9 +443,9 @@ class Hub:
         perf_frame = ctk.CTkFrame(general, fg_color="transparent")
         perf_frame.pack(fill="x", padx=S(25), pady=S(6))
         ctk.CTkLabel(perf_frame, text="Hardware Acceleration",
-                     font=("Arial", S(13), "bold"), text_color=TEXT_PRI).pack(side="left")
+                     font=(FONT_FAMILY, S(13), "bold"), text_color=TEXT_PRI).pack(side="left")
         ctk.CTkLabel(perf_frame, text="Use GPU for smoother processing.",
-                     font=("Arial", S(10)), text_color=TEXT_SEC).pack(side="left", padx=S(10))
+                     font=(FONT_FAMILY, S(10)), text_color=TEXT_SEC).pack(side="left", padx=S(10))
 
         gpu_var = tk.StringVar(value=self.general_config["cpu_or_gpu"])
         gpu_switch = ctk.CTkSwitch(
@@ -500,7 +501,7 @@ class Hub:
         row = ctk.CTkFrame(parent, fg_color="transparent")
         row.pack(fill="x", padx=S(25), pady=S(4))
 
-        ctk.CTkLabel(row, text="Player Tag (#...)", font=("Arial", S(12)),
+        ctk.CTkLabel(row, text="Player Tag (#...)", font=(FONT_FAMILY, S(12)),
                      text_color=TEXT_PRI).pack(side="left")
 
         raw = self.general_config.get("player_tag", "")
@@ -523,7 +524,7 @@ class Hub:
         var.trace_add("write", _schedule_save)
 
         entry = ctk.CTkEntry(row, textvariable=var, width=S(140),
-                             font=("Arial", S(12)), fg_color=CARD_BG,
+                             font=(FONT_FAMILY, S(12)), fg_color=CARD_BG,
                              border_color=DIVIDER)
         entry.pack(side="right", padx=S(5))
         entry.bind("<FocusOut>", lambda _: _do_save())
@@ -542,7 +543,7 @@ class Hub:
         cfg = self.general_config if use_general else self.bot_config
         path = self.general_config_path if use_general else self.bot_config_path
 
-        ctk.CTkLabel(row, text=label, font=("Arial", S(12)),
+        ctk.CTkLabel(row, text=label, font=(FONT_FAMILY, S(12)),
                      text_color=TEXT_PRI).pack(side="left")
 
         raw = cfg.get(config_key, "")
@@ -559,7 +560,7 @@ class Hub:
         var.trace_add("write", save)
 
         entry = ctk.CTkEntry(row, textvariable=var, width=S(90),
-                             font=("Arial", S(12)), fg_color=CARD_BG,
+                             font=(FONT_FAMILY, S(12)), fg_color=CARD_BG,
                              border_color=DIVIDER)
         entry.pack(side="right", padx=S(5))
         entry.bind("<FocusOut>", save)
@@ -572,13 +573,13 @@ class Hub:
         row = ctk.CTkFrame(parent, fg_color="transparent")
         row.pack(fill="x", padx=S(25), pady=S(6))
 
-        ctk.CTkLabel(row, text=label, font=("Arial", S(12)),
+        ctk.CTkLabel(row, text=label, font=(FONT_FAMILY, S(12)),
                      text_color=TEXT_PRI).pack(side="left")
 
         val_var = tk.StringVar(value=str(self.time_tresholds.get(param, 1.0)))
 
         entry = ctk.CTkEntry(row, textvariable=val_var, width=S(60),
-                             font=("Arial", S(11)), fg_color=CARD_BG,
+                             font=(FONT_FAMILY, S(11)), fg_color=CARD_BG,
                              border_color=DIVIDER)
         entry.pack(side="right", padx=S(5))
 
@@ -648,14 +649,14 @@ class Hub:
                 ctk.CTkLabel(cell, image=icon_img, text="").pack(pady=S(4))
 
             ctk.CTkLabel(cell, text=f"{brawler}\n{total} games",
-                         font=("Arial", S(12), "bold"),
+                         font=(FONT_FAMILY, S(12), "bold"),
                          text_color=TEXT_PRI).pack()
 
             stats_f = ctk.CTkFrame(cell, fg_color="transparent")
             stats_f.pack(pady=S(3))
-            ctk.CTkLabel(stats_f, text=f"{wr}%", font=("Arial", S(11), "bold"),
+            ctk.CTkLabel(stats_f, text=f"{wr}%", font=(FONT_FAMILY, S(11), "bold"),
                          text_color=GREEN).pack(side="left", padx=S(3))
-            ctk.CTkLabel(stats_f, text=f"{lr}%", font=("Arial", S(11), "bold"),
+            ctk.CTkLabel(stats_f, text=f"{lr}%", font=(FONT_FAMILY, S(11), "bold"),
                          text_color="#e74c3c").pack(side="left", padx=S(3))
 
             col_idx += 1
@@ -712,7 +713,7 @@ class Hub:
                 label = ctk.CTkLabel(
                     self.tooltip_window, text=self._tooltip_text,
                     fg_color=CARD_BG, text_color=TEXT_PRI,
-                    corner_radius=S(6), font=("Arial", S(11))
+                    corner_radius=S(6), font=(FONT_FAMILY, S(11))
                 )
                 label.pack(padx=S(6), pady=S(4))
                 self.tooltip_window.bind("<Enter>", self._hide_tooltip)

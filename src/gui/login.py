@@ -36,32 +36,33 @@ def login(logged_in_setter):
 
     app = ctk.CTk()
     app.title('PYLAMYDD — Authentication')
-    app.geometry('500x220')
+    app.geometry('500x230')
     ctk.set_appearance_mode("dark")
-    app.configure(fg_color="#0B0B0B")
+    app.configure(fg_color="#09090B") # Deep obsidian
 
-    header = ctk.CTkFrame(app, fg_color="#1A1A1A", height=40, corner_radius=0)
+    header = ctk.CTkFrame(app, fg_color="#0E0E11", height=45, corner_radius=0)
     header.pack(fill="x")
     header.pack_propagate(False)
-    ctk.CTkLabel(header, text="AUTHENTICATION", font=("Arial", 13, "bold"), text_color="#C80000").pack(side="left", padx=15)
+    ctk.CTkLabel(header, text="AUTHENTICATION", font=("Inter", 14, "bold"), text_color="#E62937").pack(side="left", padx=20)
 
-    label = ctk.CTkLabel(app, text="Enter API Key:", font=("Arial", 18, "bold"), text_color="#FFFFFF")
-    label.pack(pady=(15, 5))
+    label = ctk.CTkLabel(app, text="Enter API Key:", font=("Inter", 18, "bold"), text_color="#F8F9FA")
+    label.pack(pady=(20, 5))
 
     api_key_entry = ctk.CTkEntry(
-        app, placeholder_text="API Key", font=("Arial", 16), width=400,
-        fg_color="#1A1A1A", border_color="#C80000", text_color="#FFFFFF"
+        app, placeholder_text="API Key", font=("Inter", 15), width=400, height=40,
+        fg_color="#16161A", border_color="#27272A", text_color="#F8F9FA", corner_radius=8
     )
-    api_key_entry.pack(pady=(10, 10))
+    # Highlight border on focus can be simulated but native CTk handles it okay if we keep border thin
+    api_key_entry.pack(pady=(10, 15))
 
     login_button = ctk.CTkButton(
         app, text="LOGIN", command=on_login_button_click,
-        font=("Arial", 18, "bold"), fg_color="#C80000", hover_color="#FF1A1A",
-        corner_radius=6, height=40
+        font=("Inter", 16, "bold"), fg_color="#E62937", hover_color="#FF3A4A",
+        corner_radius=8, height=45, width=400
     )
     login_button.pack()
 
-    result_label = ctk.CTkLabel(app, text="", font=("Arial", 13))
+    result_label = ctk.CTkLabel(app, text="", font=("Inter", 13))
     result_label.pack(pady=(8, 0))
 
     app.mainloop()

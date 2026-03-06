@@ -43,15 +43,15 @@ class SelectBrawler:
         self.app.geometry(f"{str(int(710 * scale_factor))}x{necessary_height}+{str(int(600 * scale_factor))}")
         self.data_setter = data_setter
         self.colors = {
-            'gray': "#7d7777",
-            'red': "#C80000",
-            'darker_white': '#c4c4c4',
-            'dark gray': '#1A1A1A',
-            'cherry red': '#C80000',
-            'ui box gray': '#0B0B0B',
-            'chess white': '#AAAAAA',
+            'gray': "#71717A",
+            'red': "#E62937",
+            'darker_white': '#E4E4E7',
+            'dark gray': '#16161A',
+            'cherry red': '#E62937',
+            'ui box gray': '#09090B',
+            'chess white': '#F8F9FA',
             'chess brown': '#b58863',
-            'indian red': "#FF1A1A"
+            'indian red': "#FF3A4A"
         }
 
         self.app.configure(fg_color=self.colors['ui box gray'])
@@ -81,7 +81,7 @@ class SelectBrawler:
             placeholder_text="Type brawler name...", font=("", int(20 * scale_factor)), width=int(200 * scale_factor),
             fg_color=self.colors['ui box gray'], border_color=self.colors['cherry red'], text_color="white"
         )
-        ctk.CTkLabel(self.app, text="Write brawler", font=("Arial", int(20 * scale_factor)),
+        ctk.CTkLabel(self.app, text="Write brawler", font=("Inter", int(20 * scale_factor)),
                      text_color=self.colors['cherry red']).place(x=int(scale_factor * 298), y=int(scale_factor * 20))
         self.filter_entry.place(x=int(265 * scale_factor), y=int(scale_factor * 52))
         self.filter_var.trace_add("write", lambda *args: self.update_images(self.filter_var.get()))
@@ -94,13 +94,13 @@ class SelectBrawler:
 
         ctk.CTkButton(self.app, text="Start", command=self.start_bot, fg_color=self.colors['ui box gray'],
                       text_color="white",
-                      font=("Arial", int(25 * scale_factor)), border_color=self.colors['cherry red'],
+                      font=("Inter", int(25 * scale_factor)), border_color=self.colors['cherry red'],
                       border_width=int(2 * scale_factor)).place(x=int(315 * scale_factor), y=int((necessary_height - 60 * scale_factor)))
 
         ctk.CTkButton(self.app, text="Load Brawler Config", command=self.load_brawler_config,
                       fg_color=self.colors['ui box gray'],
                       text_color="white",
-                      font=("Arial", int(25 * scale_factor)), border_color=self.colors['cherry red'],
+                      font=("Inter", int(25 * scale_factor)), border_color=self.colors['cherry red'],
                       border_width=int(2 * scale_factor)).place(x=int(10 * scale_factor),
                                                                 y=int((necessary_height - 60 * scale_factor)))
 
@@ -110,12 +110,12 @@ class SelectBrawler:
             placeholder_text="Enter an amount of minutes", font=("", int(20 * scale_factor)), width=int(80 * scale_factor),
             fg_color=self.colors['ui box gray'], border_color=self.colors['cherry red'], text_color="white"
         )
-        ctk.CTkLabel(self.app, text="Run for :", font=("Arial", int(22 * scale_factor)),
+        ctk.CTkLabel(self.app, text="Run for :", font=("Inter", int(22 * scale_factor)),
                      text_color="white").place(x=int(scale_factor * 430), y=int((necessary_height - 55 * scale_factor)))
         self.timer_entry.place(x=int(scale_factor * 525), y=int((necessary_height - 55 * scale_factor)))
         self.timer_var.set(load_toml_as_dict("cfg/general_config.toml")["run_for_minutes"])
         self.timer_var.trace_add("write", lambda *args: self.update_timer(self.timer_var.get()))
-        ctk.CTkLabel(self.app, text="minutes", font=("Arial", int(22 * scale_factor)),
+        ctk.CTkLabel(self.app, text="minutes", font=("Inter", int(22 * scale_factor)),
                      text_color="white").place(x=int(scale_factor * 610), y=int((necessary_height - 55 * scale_factor)))
 
         self.app.mainloop()
@@ -300,19 +300,19 @@ class SelectBrawler:
         self.trophies_button.place(x=int(10 * scale_factor))
         self.wins_button.place(x=int(110 * scale_factor))
 
-        ctk.CTkLabel(top, text=f"Brawler: {brawler}", font=("Arial", int(20 * scale_factor)),
+        ctk.CTkLabel(top, text=f"Brawler: {brawler}", font=("Inter", int(20 * scale_factor)),
                      text_color=self.colors['red']).pack(pady=int(7 * scale_factor))
         farm_type_button_frame.pack()
-        ctk.CTkLabel(top, text="Target Amount", font=("Arial", int(15 * scale_factor)),
+        ctk.CTkLabel(top, text="Target Amount", font=("Inter", int(15 * scale_factor)),
                      text_color=self.colors['chess white']).pack()
         push_until_entry.pack(pady=int(4 * scale_factor))
-        ctk.CTkLabel(top, text="Current Trophies", font=("Arial", int(15 * scale_factor)),
+        ctk.CTkLabel(top, text="Current Trophies", font=("Inter", int(15 * scale_factor)),
                      text_color=self.colors['chess white']).pack()
         trophies_entry.pack(pady=int(4 * scale_factor))
-        ctk.CTkLabel(top, text="Current Wins", font=("Arial", int(15 * scale_factor)),
+        ctk.CTkLabel(top, text="Current Wins", font=("Inter", int(15 * scale_factor)),
                      text_color=self.colors['chess white']).pack()
         wins_entry.pack(pady=int(4 * scale_factor))
-        ctk.CTkLabel(top, text="Current Brawler's Win Streak", font=("Arial", int(15 * scale_factor)),
+        ctk.CTkLabel(top, text="Current Brawler's Win Streak", font=("Inter", int(15 * scale_factor)),
                      text_color=self.colors['chess white']).pack()
         current_win_streak_entry.pack(pady=int(4 * scale_factor))
         auto_pick_checkbox.pack(pady=int(4 * scale_factor))
@@ -344,7 +344,7 @@ class SelectBrawler:
 
                 label = ctk.CTkLabel(
                     self.image_frame, image=img_tk, text=text,
-                    font=("Arial", int(12 * scale_factor), "bold"),
+                    font=("Inter", int(12 * scale_factor), "bold"),
                     text_color="#FFD700", compound="top"
                 )
                 label.bind("<Button-1>", lambda e, b=brawler: self.on_image_click(b))
