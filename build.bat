@@ -19,21 +19,21 @@ echo [1/8] Upgrading pip...
 python -m pip install --upgrade pip --quiet 2>nul
 
 echo [2/8] Installing setuptools...
-pip install setuptools --quiet 2>nul
+python -m pip install setuptools --quiet 2>nul
 
 echo [3/8] Installing PyInstaller...
 python -m pip install pyinstaller --quiet
 
 echo [4/8] Installing dependencies...
-pip install -r requirements.txt --quiet
-pip install "adbutils>=2.0.0" --quiet
+python -m pip install -r requirements.txt --quiet
+python -m pip install "adbutils>=2.0.0" --quiet
 
 echo [5/8] Installing scrcpy-client...
 :: Check if git is available (needed for scrcpy-client install from GitHub)
 git --version >nul 2>&1
 if errorlevel 1 (
     echo    Git not found - installing scrcpy-client via pip fallback...
-    pip install scrcpy-client --quiet 2>nul
+    python -m pip install scrcpy-client --quiet 2>nul
     if errorlevel 1 (
         echo    [WARNING] Could not install scrcpy-client automatically.
         echo    Please install Git from https://git-scm.com/downloads
@@ -42,7 +42,7 @@ if errorlevel 1 (
         exit /b 1
     )
 ) else (
-    pip install "scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0" --quiet --no-deps
+    python -m pip install "scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0" --quiet --no-deps
 )
 
 echo [6/8] Cleaning previous builds...
@@ -65,7 +65,6 @@ python -m PyInstaller --noconfirm --onedir --console --name PylaMydd --distpath 
     --add-data "tools/AdbWinApi.dll;." ^
     --add-data "tools/AdbWinUsbApi.dll;." ^
     --add-data "latest_brawler_data.json;." ^
-    --copy-metadata customtkinter ^
     --hidden-import scrcpy ^
     --hidden-import scrcpy.core ^
     --hidden-import adbutils ^

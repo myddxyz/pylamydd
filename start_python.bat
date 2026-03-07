@@ -19,18 +19,18 @@ echo [1/5] Upgrading pip...
 python -m pip install --upgrade pip --quiet 2>nul
 
 echo [2/5] Installing setuptools...
-pip install setuptools --quiet 2>nul
+python -m pip install setuptools --quiet 2>nul
 
 echo [3/5] Installing dependencies...
-pip install -r requirements.txt --quiet
-pip install "adbutils>=2.0.0" --quiet
+python -m pip install -r requirements.txt --quiet
+python -m pip install "adbutils>=2.0.0" --quiet
 
 echo [4/5] Installing scrcpy-client...
 :: Check if git is available (needed for scrcpy-client install from GitHub)
 git --version >nul 2>&1
 if errorlevel 1 (
     echo    Git not found - installing scrcpy-client via pip fallback...
-    pip install scrcpy-client --quiet 2>nul
+    python -m pip install scrcpy-client --quiet 2>nul
     if errorlevel 1 (
         echo    [WARNING] Could not install scrcpy-client automatically.
         echo    Please install Git from https://git-scm.com/downloads
@@ -39,7 +39,7 @@ if errorlevel 1 (
         exit /b 1
     )
 ) else (
-    pip install "scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0" --quiet --no-deps
+    python -m pip install "scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0" --quiet --no-deps
 )
 
 echo [5/5] Starting PylaMydd...
