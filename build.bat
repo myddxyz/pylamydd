@@ -15,20 +15,25 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo [1/8] Upgrading pip...
+echo [1/9] Creating Virtual Environment...
+if exist "build_env" rmdir /s /q build_env
+python -m venv build_env
+call build_env\Scripts\activate.bat
+
+echo [2/9] Upgrading pip...
 python -m pip install --upgrade pip --quiet 2>nul
 
-echo [2/8] Installing setuptools...
+echo [3/9] Installing setuptools...
 python -m pip install setuptools --quiet 2>nul
 
-echo [3/8] Installing PyInstaller...
+echo [4/9] Installing PyInstaller...
 python -m pip install pyinstaller --quiet
 
-echo [4/8] Installing dependencies...
+echo [5/9] Installing dependencies...
 python -m pip install -r requirements.txt --quiet
 python -m pip install "adbutils>=2.0.0" --quiet
 
-echo [5/8] Installing scrcpy-client...
+echo [6/9] Installing scrcpy-client...
 :: Check if git is available (needed for scrcpy-client install from GitHub)
 git --version >nul 2>&1
 if errorlevel 1 (
@@ -45,12 +50,12 @@ if errorlevel 1 (
     python -m pip install "scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0" --quiet --no-deps
 )
 
-echo [6/8] Cleaning previous builds...
+echo [7/9] Cleaning previous builds...
 if exist "dist" rmdir /s /q dist
 if exist "build" rmdir /s /q build
 if exist "PylaMydd.spec" del /q PylaMydd.spec
 
-echo [7/8] Building PylaMydd.exe ...
+echo [8/9] Building PylaMydd.exe ...
 echo    (This may take several minutes)
 echo.
 
@@ -65,6 +70,7 @@ python -m PyInstaller --noconfirm --onedir --console --name PylaMydd --distpath 
     --add-data "tools/AdbWinApi.dll;." ^
     --add-data "tools/AdbWinUsbApi.dll;." ^
     --add-data "latest_brawler_data.json;." ^
+    --copy-metadata customtkinter ^
     --hidden-import scrcpy ^
     --hidden-import scrcpy.core ^
     --hidden-import adbutils ^
@@ -89,7 +95,7 @@ python -m PyInstaller --noconfirm --onedir --console --name PylaMydd --distpath 
     src\main.py
 
 echo.
-echo [8/8] Organizing output folder...
+echo [9/9] Organizing output folder...
 :: Create the clean user-facing root folder
 mkdir "dist\PylaMyddRelease" >nul 2>&1
 
@@ -103,8 +109,10 @@ move "dist\bin\PylaMydd\_internal\latest_brawler_data.json" "dist\PylaMyddReleas
 :: Move the entire nasty bin folder into the clean root as 'system'
 move "dist\bin\PylaMydd" "dist\PylaMyddRelease\system" >nul 2>&1
 
-:: Clean up the temporary bin directory
+:: Clean up the temporary bin directory and virtual environment
 rmdir /s /q "dist\bin" >nul 2>&1
+call build_env\Scripts\deactivate.bat
+rmdir /s /q "build_env" >nul 2>&1
 
 :: Create the launcher script at the root
 echo @echo off > "dist\PylaMyddRelease\Start_PylaMydd.bat"
