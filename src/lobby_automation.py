@@ -104,6 +104,12 @@ class LobbyAutomation:
             'shey': BrawlerName.Shelly.value,
             'shlly': BrawlerName.Shelly.value,
             'larryslawrie': BrawlerName.Larry.value,
+            'surqe': BrawlerName.Surge.value,
+            'surce': BrawlerName.Surge.value,
+            '5urge': BrawlerName.Surge.value,
+            'surg': BrawlerName.Surge.value,
+            'urge': BrawlerName.Surge.value,
+            'sur': BrawlerName.Surge.value,
         }.get(potential_brawler_name, None)
 
         return matched_typo or potential_brawler_name

@@ -82,6 +82,7 @@ class Hub:
         self.general_config.setdefault("trophies_multiplier", 1.0)
         self.general_config.setdefault("current_emulator", "LDPlayer")
         self.general_config.setdefault("player_tag", "")
+        self.general_config.setdefault("target_push_trophies", 500)
 
         ctk.set_appearance_mode("dark")
 
@@ -423,6 +424,8 @@ class Hub:
         self._setting_row_player_tag(general)
         self._setting_row(general, "Official API Token", "brawl_stars_api_token",
                          str, "Your API token from developer.brawlstars.com for auto-fetching trophies.", True)
+        self._setting_row(general, "Push All Target Trophies", "target_push_trophies",
+                         int, "The target trophies max limit for the 'Push All' automation.", True)
 
         self._section_header(general, "DETECTION")
         self._setting_row(general, "Minimum Movement Delay", "minimum_movement_delay",

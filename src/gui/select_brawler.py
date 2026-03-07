@@ -110,10 +110,19 @@ class SelectBrawler:
         load_btn = ctk.CTkButton(
             footer_frame, text="Load Config", command=self.load_brawler_config,
             fg_color=self.colors['dark gray'], hover_color=self.colors['ui box gray'], text_color="white",
-            font=("Inter", int(16 * scale_factor), "bold"), border_color=self.colors['gray'],
-            border_width=int(1 * scale_factor), corner_radius=8, width=int(140 * scale_factor), height=int(40 * scale_factor)
+            font=("Inter", int(14 * scale_factor), "bold"), border_color=self.colors['gray'],
+            border_width=int(1 * scale_factor), corner_radius=8, width=int(110 * scale_factor), height=int(40 * scale_factor)
         )
-        load_btn.pack(side="left", padx=int(15 * scale_factor), pady=int(20 * scale_factor))
+        load_btn.pack(side="left", padx=int(10 * scale_factor), pady=int(20 * scale_factor))
+
+        target_trophies = load_toml_as_dict("cfg/general_config.toml").get("target_push_trophies", 500)
+        push_all_btn = ctk.CTkButton(
+            footer_frame, text=f"Push All to {target_trophies}", command=self.push_all_to_500,
+            fg_color=self.colors['dark gray'], hover_color=self.colors['ui box gray'], text_color="white",
+            font=("Inter", int(14 * scale_factor), "bold"), border_color=self.colors['gray'],
+            border_width=int(1 * scale_factor), corner_radius=8, width=int(130 * scale_factor), height=int(40 * scale_factor)
+        )
+        push_all_btn.pack(side="left", padx=int(10 * scale_factor), pady=int(20 * scale_factor))
 
         # Center: Start Button (Big & Prominent)
         start_btn = ctk.CTkButton(
@@ -122,7 +131,7 @@ class SelectBrawler:
             font=("Inter", int(18 * scale_factor), "bold"), corner_radius=8,
             width=int(180 * scale_factor), height=int(45 * scale_factor)
         )
-        start_btn.pack(side="left", padx=int(30 * scale_factor), pady=int(17 * scale_factor))
+        start_btn.pack(side="left", padx=int(15 * scale_factor), pady=int(17 * scale_factor))
 
         # Right side: Timer
         timer_frame = ctk.CTkFrame(footer_frame, fg_color="transparent")
@@ -204,6 +213,34 @@ class SelectBrawler:
     def start_bot(self):
         self.data_setter(self.brawlers_data)
         self.app.destroy()
+
+    def push_all_to_500(self):
+        target_trophies = load_toml_as_dict("cfg/general_config.toml").get("target_push_trophies", 500)
+        brawlers_to_push = []
+        for brawler in self.brawlers:
+            normalized = _normalize_brawler_name(brawler)
+            trophy_count = self.trophies_dict.get(normalized)
+            if trophy_count is not None and trophy_count < target_trophies:
+                brawlers_to_push.append({
+                    "brawler": brawler,
+                    "push_until": target_trophies,
+                    "trophies": trophy_count,
+                    "wins": 0,
+                    "type": "trophies",
+                    "automatically_pick": True,
+                    "win_streak": 0
+                })
+        
+        # Sort so brawlers closer to target are pushed first
+        brawlers_to_push.sort(key=lambda x: x["trophies"], reverse=True)
+        
+        if not brawlers_to_push:
+            print(f"All available brawlers are already at or above {target_trophies} trophies.")
+            return
+
+        self.brawlers_data = brawlers_to_push
+        print(f"Queued {len(self.brawlers_data)} brawlers for pushing to {target_trophies} trophies.")
+        self.start_bot()
 
     def load_brawler_config(self):
         file_path = filedialog.askopenfilename(
