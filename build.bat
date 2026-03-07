@@ -9,8 +9,21 @@ echo.
 python --version >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Python is not installed or not in PATH!
-    echo Please install Python 3.10+ from https://www.python.org/downloads/
+    echo Please install Python 3.10, 3.11, or 3.12 from https://www.python.org/downloads/
     echo Make sure to check "Add Python to PATH" during installation.
+    pause
+    exit /b 1
+)
+
+:: Check Python Version (< 3.13 required)
+python -c "import sys; exit(1 if sys.version_info >= (3, 13) else 0)" >nul 2>&1
+if errorlevel 1 (
+    echo.
+    echo [CRITICAL ERROR] Python 3.13 or newer is currently completely incompatible with PylaMydd!
+    echo Libraries such as 'scrcpy-client' and 'av' lack Windows binaries for versions ^>= 3.13.
+    echo Please completely uninstall your current Python, and install Python 3.11 or 3.12 instead.
+    echo Download here: https://www.python.org/downloads/
+    echo.
     pause
     exit /b 1
 )
@@ -31,6 +44,11 @@ python -m pip install pyinstaller --quiet
 
 echo [5/9] Installing dependencies...
 python -m pip install -r requirements.txt --quiet
+if errorlevel 1 (
+    echo [ERROR] Failed to install requirements.txt! See the console above for reasons.
+    pause
+    exit /b 1
+)
 python -m pip install "adbutils>=2.0.0" --quiet
 
 echo [6/9] Installing scrcpy-client...
@@ -48,6 +66,11 @@ if errorlevel 1 (
     )
 ) else (
     python -m pip install "scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0" --quiet --no-deps
+    if errorlevel 1 (
+        echo [ERROR] Failed to compile and install scrcpy-client through git!
+        pause
+        exit /b 1
+    )
 )
 
 echo [7/9] Cleaning previous builds...
