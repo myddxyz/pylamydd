@@ -18,3 +18,4 @@ pure-python-adb
 google-play-scraper~=1.2.7
 easyocr~=1.7.2
 av~=12.3.0
+bettercam
