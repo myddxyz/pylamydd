@@ -65,6 +65,7 @@ python -m PyInstaller --noconfirm --onedir --console --name PylaMydd --distpath 
     --add-data "tools/AdbWinApi.dll;." ^
     --add-data "tools/AdbWinUsbApi.dll;." ^
     --add-data "latest_brawler_data.json;." ^
+    --copy-metadata customtkinter ^
     --hidden-import scrcpy ^
     --hidden-import scrcpy.core ^
     --hidden-import adbutils ^
