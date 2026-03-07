@@ -18,7 +18,7 @@ echo    (This may take several minutes)
 echo.
 
 :: Build the EXE into a 'bin' distribution folder so the root stays clean
-pyinstaller --noconfirm --onedir --console --name PylaMydd --distpath dist\bin ^
+python -m PyInstaller --noconfirm --onedir --console --name PylaMydd --distpath dist\bin ^
     --paths "src" ^
     --add-data "cfg;cfg" ^
     --add-data "models;models" ^
