@@ -1,4 +1,5 @@
 import time
+import difflib
 
 import cv2
 import numpy as np
@@ -67,9 +68,28 @@ class LobbyAutomation:
             if debug:
                 print("All detected text while looking for brawler name:", reworked_results.keys())
                 print()
+            
+            target_brawler = None
             if brawler in reworked_results.keys():
-                print("Found brawler ", brawler, "clicking on its icon at ", int(x / ocr_scale), int(y / ocr_scale))
-                x, y = reworked_results[brawler]['center']
+                target_brawler = brawler
+            else:
+                # Fuzzy matching fallback
+                words = list(reworked_results.keys())
+                close_matches = difflib.get_close_matches(brawler, words, n=1, cutoff=0.75)
+                if close_matches:
+                    target_brawler = close_matches[0]
+                    if debug: print(f"Fuzzy matched {brawler} to {target_brawler}")
+                else:
+                    # Substring matching fallback for garbled strings with other text (e.g. "power9surge")
+                    for k in words:
+                        if len(brawler) >= 4 and (brawler in k or k in brawler):
+                            target_brawler = k
+                            if debug: print(f"Substring matched {brawler} to {target_brawler}")
+                            break
+
+            if target_brawler:
+                print("Found brawler ", brawler, "via", target_brawler, "clicking on its icon at ", int(reworked_results[target_brawler]['center'][0] / ocr_scale), int(reworked_results[target_brawler]['center'][1] / ocr_scale))
+                x, y = reworked_results[target_brawler]['center']
                 self.window_controller.click(int(x / ocr_scale), int(y / ocr_scale))
                 time.sleep(1)
                 select_x, select_y = self.coords_cfg['lobby']['select_btn'][0], self.coords_cfg['lobby']['select_btn'][1]
