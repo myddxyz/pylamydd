@@ -73,9 +73,9 @@ rmdir /s /q "dist\bin" >nul 2>&1
 echo @echo off > "dist\PylaMyddRelease\Start_PylaMydd.bat"
 echo title PylaMydd >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
 echo cd /d "%%~dp0" >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
-echo system\PylaMydd\PylaMydd.exe >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo system\PylaMydd.exe >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
 
-if exist "dist\PylaMyddRelease\system\PylaMydd\PylaMydd.exe" (
+if exist "dist\PylaMyddRelease\system\PylaMydd.exe" (
     echo ============================================
     echo    BUILD SUCCESSFUL!
     echo    Output: dist\PylaMyddRelease\
