@@ -5,15 +5,52 @@ echo    PylaMydd - Building Standalone .exe
 echo ============================================
 echo.
 
-echo [1/4] Installing PyInstaller...
+:: Check Python is available
+python --version >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Python is not installed or not in PATH!
+    echo Please install Python 3.10+ from https://www.python.org/downloads/
+    echo Make sure to check "Add Python to PATH" during installation.
+    pause
+    exit /b 1
+)
+
+echo [1/8] Upgrading pip...
+python -m pip install --upgrade pip --quiet 2>nul
+
+echo [2/8] Installing setuptools...
+pip install setuptools --quiet 2>nul
+
+echo [3/8] Installing PyInstaller...
 python -m pip install pyinstaller --quiet
 
-echo [2/4] Cleaning previous builds...
+echo [4/8] Installing dependencies...
+pip install -r requirements.txt --quiet
+pip install "adbutils>=2.0.0" --quiet
+
+echo [5/8] Installing scrcpy-client...
+:: Check if git is available (needed for scrcpy-client install from GitHub)
+git --version >nul 2>&1
+if errorlevel 1 (
+    echo    Git not found - installing scrcpy-client via pip fallback...
+    pip install scrcpy-client --quiet 2>nul
+    if errorlevel 1 (
+        echo    [WARNING] Could not install scrcpy-client automatically.
+        echo    Please install Git from https://git-scm.com/downloads
+        echo    Then re-run this script.
+        pause
+        exit /b 1
+    )
+) else (
+    pip install "scrcpy-client@git+https://github.com/leng-yue/py-scrcpy-client.git@v0.5.0" --quiet --no-deps
+)
+
+echo [6/8] Cleaning previous builds...
 if exist "dist" rmdir /s /q dist
 if exist "build" rmdir /s /q build
 if exist "PylaMydd.spec" del /q PylaMydd.spec
 
-echo [3/4] Building PylaMydd.exe ...
+echo [7/8] Building PylaMydd.exe ...
 echo    (This may take several minutes)
 echo.
 
@@ -52,7 +89,7 @@ python -m PyInstaller --noconfirm --onedir --console --name PylaMydd --distpath 
     src\main.py
 
 echo.
-echo [4/4] Organizing output folder...
+echo [8/8] Organizing output folder...
 :: Create the clean user-facing root folder
 mkdir "dist\PylaMyddRelease" >nul 2>&1
 
@@ -74,6 +111,13 @@ echo @echo off > "dist\PylaMyddRelease\Start_PylaMydd.bat"
 echo title PylaMydd >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
 echo cd /d "%%~dp0" >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
 echo system\PylaMydd.exe >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo if errorlevel 1 ( >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo     echo. >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo     echo ============================================ >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo     echo    PylaMydd crashed! Check the error above. >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo     echo ============================================ >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo     pause >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
+echo ) >> "dist\PylaMyddRelease\Start_PylaMydd.bat"
 
 if exist "dist\PylaMyddRelease\system\PylaMydd.exe" (
     echo ============================================
