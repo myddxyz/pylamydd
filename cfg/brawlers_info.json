@@ -1,0 +1,1003 @@
+{
+    "shelly": {
+        "safe_range": 301.0,
+        "attack_range": 490.0,
+        "super_type": "damage",
+        "super_range": 490,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "colt": {
+        "safe_range": 324.0,
+        "attack_range": 546.0,
+        "super_type": "damage",
+        "super_range": 704,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "fighter"
+    },
+    "bull": {
+        "safe_range": 210.0,
+        "attack_range": 341.0,
+        "super_type": "charge",
+        "super_range": 704,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "tank"
+    },
+    "brock": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "damage",
+        "super_range": 533,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.1,
+        "category": "sharpshooter"
+    },
+    "rico": {
+        "safe_range": 380.0,
+        "attack_range": 618.0,
+        "super_type": "damage",
+        "super_range": 853,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.2,
+        "category": "fighter"
+    },
+    "spike": {
+        "safe_range": 301.0,
+        "attack_range": 490.0,
+        "super_type": "damage",
+        "super_range": 490,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.0,
+        "category": "fighter"
+    },
+    "barley": {
+        "safe_range": 288.0,
+        "attack_range": 469.0,
+        "super_type": "damage",
+        "super_range": 597,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.0,
+        "category": "thrower"
+    },
+    "jessie": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.85,
+        "category": "controller"
+    },
+    "nita": {
+        "safe_range": 236.0,
+        "attack_range": 384.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.25,
+        "category": "fighter"
+    },
+    "dynamike": {
+        "safe_range": 288.0,
+        "attack_range": 469.0,
+        "super_type": "damage",
+        "super_range": 469,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.7,
+        "category": "thrower"
+    },
+    "elprimo": {
+        "safe_range": 0.0,
+        "attack_range": 192.0,
+        "super_type": "charge",
+        "super_range": 576,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 0.8,
+        "category": "tank"
+    },
+    "mortis": {
+        "safe_range": 0.0,
+        "attack_range": 170.0,
+        "super_type": "damage",
+        "super_range": 640,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.4,
+        "category": "assassin"
+    },
+    "crow": {
+        "safe_range": 341.0,
+        "attack_range": 554.0,
+        "super_type": "charge",
+        "super_range": 554,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.4,
+        "category": "assassin"
+    },
+    "poco": {
+        "safe_range": 275.0,
+        "attack_range": 448.0,
+        "super_type": "other",
+        "super_range": 597,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "support"
+    },
+    "bo": {
+        "safe_range": 341.0,
+        "attack_range": 554.0,
+        "super_type": "spawnable",
+        "super_range": 554,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.7,
+        "category": "controller"
+    },
+    "piper": {
+        "safe_range": 393.0,
+        "attack_range": 640.0,
+        "super_type": "charge",
+        "super_range": 554,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.3,
+        "category": "sharpshooter"
+    },
+    "pam": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.3,
+        "category": "support"
+    },
+    "tara": {
+        "safe_range": 315.0,
+        "attack_range": 512.0,
+        "super_type": "damage",
+        "super_range": 426,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.3,
+        "category": "fighter"
+    },
+    "darryl": {
+        "safe_range": 236.0,
+        "attack_range": 384.0,
+        "super_type": "charge",
+        "super_range": 448,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.8,
+        "category": "tank"
+    },
+    "penny": {
+        "safe_range": 315.0,
+        "attack_range": 512.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.0,
+        "category": "thrower"
+    },
+    "frank": {
+        "safe_range": 236.0,
+        "attack_range": 384.0,
+        "super_type": "damage",
+        "super_range": 448,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 0.8,
+        "category": "tank"
+    },
+    "tick": {
+        "safe_range": 341.0,
+        "attack_range": 554.0,
+        "super_type": "spawnable",
+        "super_range": 213,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.2,
+        "category": "thrower"
+    },
+    "leon": {
+        "safe_range": 380.0,
+        "attack_range": 618.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.9,
+        "category": "assassin"
+    },
+    "rosa": {
+        "safe_range": 0.0,
+        "attack_range": 234.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.0,
+        "category": "tank"
+    },
+    "carl": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 0.5,
+        "category": "fighter"
+    },
+    "bibi": {
+        "safe_range": 0.0,
+        "attack_range": 234.0,
+        "super_type": "damage",
+        "super_range": 2560,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 0.8,
+        "category": "tank"
+    },
+    "8bit": {
+        "safe_range": 393.0,
+        "attack_range": 640.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "sandy": {
+        "safe_range": 236.0,
+        "attack_range": 384.0,
+        "super_type": "other",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.85,
+        "category": "controller"
+    },
+    "bea": {
+        "safe_range": 393.0,
+        "attack_range": 640.0,
+        "super_type": "damage",
+        "super_range": 576,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 0.9,
+        "category": "sharpshooter"
+    },
+    "emz": {
+        "safe_range": 262.0,
+        "attack_range": 426.0,
+        "super_type": "damage",
+        "super_range": 363,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.1,
+        "category": "controller"
+    },
+    "mrp": {
+        "safe_range": 275.0,
+        "attack_range": 448.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "controller"
+    },
+    "max": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.3,
+        "category": "support"
+    },
+    "jacky": {
+        "safe_range": 0.0,
+        "attack_range": 213.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.85,
+        "category": "tank"
+    },
+    "gale": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "damage",
+        "super_range": 640,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "controller"
+    },
+    "nani": {
+        "safe_range": 341.0,
+        "attack_range": 554.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.8,
+        "category": "sharpshooter"
+    },
+    "sprout": {
+        "safe_range": 196.0,
+        "attack_range": 320.0,
+        "super_type": "other_target",
+        "super_range": 490,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.7,
+        "category": "thrower"
+    },
+    "surge": {
+        "safe_range": 200,
+        "attack_range": 426.0,
+        "super_type": "other_target",
+        "super_range": 213,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "colette": {
+        "safe_range": 341.0,
+        "attack_range": 554.0,
+        "super_type": "charge",
+        "super_range": 704,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "fighter"
+    },
+    "amber": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "damage",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 0.2,
+        "category": "controller"
+    },
+    "lou": {
+        "safe_range": 367.0,
+        "attack_range": 597.0,
+        "super_type": "other_target",
+        "super_range": 490,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.4,
+        "category": "controller"
+    },
+    "byron": {
+        "safe_range": 393.0,
+        "attack_range": 640.0,
+        "super_type": "damage",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "support"
+    },
+    "edgar": {
+        "safe_range": 0.0,
+        "attack_range": 128.0,
+        "super_type": "charge",
+        "super_range": 426,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 0.7,
+        "category": "assassin"
+    },
+    "stu": {
+        "safe_range": 301.0,
+        "attack_range": 490.0,
+        "super_type": "charge",
+        "super_range": 149,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "belle": {
+        "safe_range": 393.0,
+        "attack_range": 640.0,
+        "super_type": "damage",
+        "super_range": 682,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "sharpshooter"
+    },
+    "squeak": {
+        "safe_range": 301.0,
+        "attack_range": 490.0,
+        "super_type": "damage",
+        "super_range": 533,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.8,
+        "category": "controller"
+    },
+    "grom": {
+        "safe_range": 301.0,
+        "attack_range": 490.0,
+        "super_type": "damage",
+        "super_range": 533,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.7,
+        "category": "thrower"
+    },
+    "buzz": {
+        "safe_range": 0.0,
+        "attack_range": 170.0,
+        "super_type": "charge",
+        "super_range": 640,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "assassin"
+    },
+    "griff": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "damage",
+        "super_range": 576,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.4,
+        "category": "controller"
+    },
+    "ash": {
+        "safe_range": 0.0,
+        "attack_range": 298.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "tank"
+    },
+    "meg": {
+        "safe_range": 270.0,
+        "attack_range": 576.0,
+        "super_type": "damage",
+        "super_range": 277,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "tank"
+    },
+    "lola": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "fighter"
+    },
+    "fang": {
+        "safe_range": 0.0,
+        "attack_range": 170.0,
+        "super_type": "charge",
+        "super_range": 640,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "eve": {
+        "safe_range": 367.0,
+        "attack_range": 597.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "fighter"
+    },
+    "janet": {
+        "safe_range": 0.0,
+        "attack_range": 256.0,
+        "super_type": "charge",
+        "super_range": 149,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "sharpshooter"
+    },
+    "bonnie": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "charge",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "sharpshooter"
+    },
+    "otis": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "other_target",
+        "super_range": 576,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "controller"
+    },
+    "gus": {
+        "safe_range": 367.0,
+        "attack_range": 597.0,
+        "super_type": "other",
+        "super_range": 597,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "support"
+    },
+    "buster": {
+        "safe_range": 210.0,
+        "attack_range": 341.0,
+        "super_type": "other",
+        "super_range": 192,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "tank"
+    },
+    "chester": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "damage",
+        "super_range": 405,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "fighter"
+    },
+    "gray": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "other_target",
+        "super_range": 426,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "support"
+    },
+    "mandy": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "damage",
+        "super_range": 2560,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.8,
+        "category": "sharpshooter"
+    },
+    "rt": {
+        "safe_range": 393.0,
+        "attack_range": 640.0,
+        "super_type": "spawnable",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "fighter"
+    },
+    "willow": {
+        "safe_range": 288.0,
+        "attack_range": 469.0,
+        "super_type": "other_target",
+        "super_range": 533,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.8,
+        "category": "controller"
+    },
+    "maisie": {
+        "safe_range": 310.0,
+        "attack_range": 554.0,
+        "super_type": "damage",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "sharpshooter"
+    },
+    "hank": {
+        "safe_range": 0.0,
+        "attack_range": 213.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "tank"
+    },
+    "cordelius": {
+        "safe_range": 210.0,
+        "attack_range": 341.0,
+        "super_type": "other_target",
+        "super_range": 576,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "assassin"
+    },
+    "doug": {
+        "safe_range": 0.0,
+        "attack_range": 213.0,
+        "super_type": "other",
+        "super_range": 597,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "support"
+    },
+    "pearl": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "damage",
+        "super_range": 213,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "chuck": {
+        "safe_range": 262.0,
+        "attack_range": 426.0,
+        "super_type": "damage",
+        "super_range": 426,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "charlie": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "other_target",
+        "super_range": 576,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "controller"
+    },
+    "mico": {
+        "safe_range": 0.0,
+        "attack_range": 256.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "kit": {
+        "safe_range": 0.0,
+        "attack_range": 234.0,
+        "super_type": "damage",
+        "super_range": 426,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.2,
+        "category": "support"
+    },
+    "melodie": {
+        "safe_range": 315.0,
+        "attack_range": 512.0,
+        "super_type": "charge",
+        "super_range": 341,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "angelo": {
+        "safe_range": 393.0,
+        "attack_range": 640.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "sharpshooter"
+    },
+    "draco": {
+        "safe_range": 0.0,
+        "attack_range": 256.0,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "tank"
+    },
+    "lily": {
+        "safe_range": 0.0,
+        "attack_range": 128.0,
+        "super_type": "damage",
+        "super_range": 576,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.3,
+        "category": "assassin"
+    },
+    "berry": {
+        "safe_range": 249.0,
+        "attack_range": 405.0,
+        "super_type": "charge",
+        "super_range": 533,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.6,
+        "category": "support"
+    },
+    "clancy": {
+        "safe_range": 301.0,
+        "attack_range": 490.0,
+        "super_type": "damage",
+        "super_range": 362,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "sam": {
+        "safe_range": 0.0,
+        "attack_range": 192.0,
+        "super_type": "damage",
+        "super_range": 554,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "moe": {
+        "safe_range": 196.0,
+        "attack_range": 320.0,
+        "super_type": "charge",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "fighter"
+    },
+    "gene": {
+        "safe_range": 223.0,
+        "attack_range": 362.0,
+        "super_type": "other_target",
+        "super_range": 490,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 2.0,
+        "category": "controller"
+    },
+    "ruffs": {
+        "safe_range": 354.0,
+        "attack_range": 576.0,
+        "super_type": "damage",
+        "super_range": 490,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "support"
+    },
+    "juju": {
+        "safe_range": 249.0,
+        "attack_range": 405.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.8,
+        "category": "thrower"
+    },
+    "shade": {
+        "safe_range": 0.0,
+        "attack_range": 234.0,
+        "super_type": "other",
+        "super_range": 213,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "larrylawrie": {
+        "safe_range": 288.0,
+        "attack_range": 469.0,
+        "super_type": "spawnable",
+        "super_range": 320,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.7,
+        "category": "thrower"
+    },
+    "kenji": {
+        "safe_range": 0.0,
+        "attack_range": 234.0,
+        "super_type": "damage",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "ollie": {
+        "safe_range": 249.0,
+        "attack_range": 405.0,
+        "super_type": "charge",
+        "super_range": 362,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "tank"
+    },
+    "meeple": {
+        "safe_range": 301.0,
+        "attack_range": 490.0,
+        "super_type": "other_target",
+        "super_range": 320,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.6,
+        "category": "controller"
+    },
+    "finx": {
+        "safe_range": 328.0,
+        "attack_range": 533.0,
+        "super_type": "other",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "controller"
+    },
+    "lumi": {
+        "safe_range": 341,
+        "attack_range": 554,
+        "super_type": "damage",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "alli": {
+        "safe_range": 0,
+        "attack_range": 192,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.2,
+        "category": "assassin"
+    },
+    "kaze": {
+        "safe_range": 0,
+        "attack_range": 170,
+        "super_type": "damage",
+        "super_range": 469,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "assassin"
+    },
+    "jaeyong": {
+        "safe_range": 328,
+        "attack_range": 533,
+        "super_type": "other",
+        "super_range": 0,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "support"
+    },
+    "trunk": {
+        "safe_range": 0,
+        "attack_range": 213,
+        "super_type": "charge",
+        "super_range": 448,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "tank"
+    },
+    "ziggy": {
+        "safe_range": 288.0,
+        "attack_range": 469.0,
+        "super_type": "damage",
+        "super_range": 853,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.7,
+        "category": "controller"
+    },
+    "mina": {
+        "safe_range": 196,
+        "attack_range": 512,
+        "super_type": "damage",
+        "super_range": 448,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.5,
+        "category": "fighter"
+    },
+    "gigi": {
+        "attack_range": 149,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "safe_range": 0,
+        "super_range": 469,
+        "super_type": "charge",
+        "reload_time": 1.3,
+        "category": "assassin"
+    },
+    "pierce": {
+        "safe_range": 305,
+        "attack_range": 614,
+        "super_type": "damage",
+        "super_range": 315,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": true,
+        "reload_time": 1.8,
+        "category": "sharpshooter"
+    },
+    "glowy": {
+        "safe_range": 315,
+        "attack_range": 512,
+        "super_type": "damage",
+        "super_range": 362,
+        "ignore_walls_for_attacks": false,
+        "ignore_walls_for_supers": false,
+        "reload_time": 1.5,
+        "category": "support"
+    },
+    "sirius": {
+        "safe_range": 288.0,
+        "attack_range": 469.0,
+        "super_type": "other",
+        "super_range": 640,
+        "ignore_walls_for_attacks": true,
+        "ignore_walls_for_supers": true,
+        "hold_attack": 0,
+        "reload_time": 1.6,
+        "category": "controller"
+    }
+}

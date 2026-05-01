@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+.env
+dist/
+build/
+*.egg-info/
+.vscode/
+.idea/
+*.spec
+api/assets/brawler_icons/
+cfg/login.toml
+latest_brawler_data.json
+cfg/match_history.toml
